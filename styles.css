@@ -6,11 +6,13 @@
 }
 
 /* PERFORMANCE OPTIMIZATIONS */
-* {
-    /* Enable hardware acceleration for better performance */
+/* Only apply hardware acceleration to animated elements */
+.poem-image,
+.audio-toggle,
+.regenerate-btn,
+.mode-indicator {
     transform: translateZ(0);
     backface-visibility: hidden;
-    perspective: 1000px;
 }
 
 /* Reduce motion for users who prefer it */
@@ -39,19 +41,35 @@
     }
 }
 
-/* Optimize animations */
-@media (max-width: 768px) {
+/* Disable expensive animations on mobile and slower devices */
+@media (max-width: 768px), (prefers-reduced-motion: reduce) {
     /* Disable complex animations on mobile */
     body.metal-mode::after,
     body.girly-mode::after,
     body.space-mode::after,
-    body.retro-mode::after {
-        display: none;
+    body.retro-mode::after,
+    body.metal-mode::before,
+    body.girly-mode::before,
+    body.space-mode::before,
+    body.retro-mode::before {
+        display: none !important;
     }
     
-    /* Reduce particle count on mobile */
-    .particle-system {
-        display: none;
+    /* Simplify remaining animations */
+    * {
+        animation-duration: 0.2s !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.2s !important;
+    }
+    
+    /* Remove expensive filters */
+    .poem-image {
+        filter: none !important;
+    }
+    
+    /* Simplify backgrounds */
+    body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
     }
 }
 
@@ -66,15 +84,11 @@ body {
     position: relative;
 }
 
-/* EXTREME THEMED BACKGROUNDS */
+/* SIMPLIFIED THEMED BACKGROUNDS - Reduced complexity */
 
-/* Metal Mode - Skulls and Fire */
+/* Metal Mode - Simplified */
 body.metal-mode {
-    background: 
-        radial-gradient(circle at 20% 50%, rgba(255, 0, 0, 0.3) 0%, transparent 50%),
-        radial-gradient(circle at 80% 30%, rgba(255, 69, 0, 0.2) 0%, transparent 50%),
-        linear-gradient(135deg, #0a0a0a 0%, #1a0000 50%, #000000 100%);
-    animation: hellfire 3s ease-in-out infinite alternate;
+    background: linear-gradient(135deg, #1a0000 0%, #000000 100%);
 }
 
 body.metal-mode::before {
@@ -84,38 +98,19 @@ body.metal-mode::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: 
-        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ff0000' fill-opacity='0.08'%3E%3Cpath d='M30 30c0-11.046-8.954-20-20-20s-20 8.954-20 20 8.954 20 20 20 20-8.954 20-20zm10 0c0-11.046-8.954-20-20-20s-20 8.954-20 20 8.954 20 20 20 20-8.954 20-20z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    opacity: 0.5;
-    will-change: transform;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 0, 0, 0.1) 0%, transparent 50%);
     pointer-events: none;
     z-index: -1;
 }
 
+/* Remove expensive scrolling animation */
 body.metal-mode::after {
-    content: '💀 ⚡ 🔥 💀 ⚡ 🔥 💀 ⚡ 🔥 💀 ⚡ 🔥 💀 ⚡ 🔥 💀 ⚡ 🔥 💀 ⚡ 🔥 💀 ⚡ 🔥';
-    position: fixed;
-    top: 0;
-    left: -100%;
-    width: 200%;
-    height: 100vh;
-    font-size: 3rem;
-    line-height: 10rem;
-    opacity: 0.08;
-    will-change: transform;
-    animation: metalScroll 20s linear infinite;
-    pointer-events: none;
-    z-index: -1;
-    white-space: nowrap;
+    display: none;
 }
 
-/* Girly Mode - Hearts and Rainbows */
+/* Girly Mode - Simplified */
 body.girly-mode {
-    background: 
-        radial-gradient(circle at 25% 25%, rgba(255, 192, 203, 0.8) 0%, transparent 50%),
-        radial-gradient(circle at 75% 75%, rgba(255, 182, 193, 0.8) 0%, transparent 50%),
-        linear-gradient(45deg, #ffb6c1 0%, #ffc0cb 25%, #ff69b4 50%, #dda0dd 75%, #ff1493 100%);
-    animation: rainbowPulse 4s ease-in-out infinite;
+    background: linear-gradient(45deg, #ffb6c1 0%, #ff69b4 100%);
 }
 
 body.girly-mode::before {
@@ -125,36 +120,19 @@ body.girly-mode::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: 
-        radial-gradient(circle at 20% 30%, rgba(255, 20, 147, 0.2) 2px, transparent 2px),
-        radial-gradient(circle at 80% 70%, rgba(255, 105, 180, 0.2) 2px, transparent 2px);
-    background-size: 80px 80px, 120px 120px;
-    will-change: transform;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 105, 180, 0.1) 0%, transparent 50%);
     pointer-events: none;
     z-index: -1;
 }
 
+/* Remove expensive scrolling animation */
 body.girly-mode::after {
-    content: '💖 🌈 ✨ 💕 🦄 💖 🌈 ✨ 💕 🦄 💖 🌈 ✨ 💕 🦄 💖 🌈 ✨ 💕 🦄 💖 🌈 ✨ 💕 🦄';
-    position: fixed;
-    top: 0;
-    left: -100%;
-    width: 200%;
-    height: 100vh;
-    font-size: 3rem;
-    line-height: 6rem;
-    opacity: 0.2;
-    animation: heartFloat 12s linear infinite;
-    pointer-events: none;
-    z-index: -1;
-    white-space: nowrap;
+    display: none;
 }
 
-/* Space Mode - Moving Stars */
+/* Space Mode - Simplified */
 body.space-mode {
-    background: 
-        radial-gradient(ellipse at center, #0f3460 0%, #16537e 50%, #533483 100%);
-    overflow: hidden;
+    background: radial-gradient(ellipse at center, #0f3460 0%, #16537e 50%, #533483 100%);
 }
 
 body.space-mode::before {
@@ -164,41 +142,19 @@ body.space-mode::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: 
-        radial-gradient(circle at 25% 25%, #ffffff 1px, transparent 1px),
-        radial-gradient(circle at 75% 75%, #ffffff 0.5px, transparent 0.5px);
-    background-size: 120px 120px, 180px 180px;
-    will-change: transform;
-    animation: starField 30s linear infinite;
+    background: radial-gradient(circle at 50% 50%, rgba(0, 255, 255, 0.1) 0%, transparent 50%);
     pointer-events: none;
     z-index: -1;
 }
 
+/* Remove expensive scrolling animation */
 body.space-mode::after {
-    content: '🌟 🚀 🌌 ⭐ 🛸 🌟 🚀 🌌 ⭐ 🛸 🌟 🚀 🌌 ⭐ 🛸 🌟 🚀 🌌 ⭐ 🛸';
-    position: fixed;
-    top: -50px;
-    left: -100%;
-    width: 200%;
-    height: calc(100vh + 100px);
-    font-size: 2rem;
-    line-height: 4rem;
-    opacity: 0.3;
-    animation: cosmicDrift 25s linear infinite;
-    pointer-events: none;
-    z-index: -1;
-    white-space: nowrap;
-    transform: rotate(-15deg);
+    display: none;
 }
 
-/* Retro Mode - Neon Grid */
+/* Retro Mode - Simplified */
 body.retro-mode {
-    background: 
-        linear-gradient(90deg, transparent 79px, rgba(255, 107, 53, 0.1) 79px, rgba(255, 107, 53, 0.1) 81px, transparent 81px),
-        linear-gradient(rgba(255, 107, 53, 0.1) 79px, transparent 79px, transparent 81px, rgba(255, 107, 53, 0.1) 81px),
-        linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #ffdc00 100%);
-    background-size: 80px 80px, 80px 80px, 100% 100%;
-    animation: neonPulse 2s ease-in-out infinite alternate;
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #ffdc00 100%);
 }
 
 body.retro-mode::before {
@@ -208,34 +164,14 @@ body.retro-mode::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background: 
-        repeating-linear-gradient(
-            0deg,
-            transparent,
-            transparent 2px,
-            rgba(255, 220, 0, 0.1) 2px,
-            rgba(255, 220, 0, 0.1) 4px
-        );
-    animation: scanlines 0.1s linear infinite;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 220, 0, 0.1) 0%, transparent 50%);
     pointer-events: none;
     z-index: -1;
 }
 
+/* Remove expensive scrolling animation */
 body.retro-mode::after {
-    content: '🕹️ 📼 💾 🎮 📺 🕹️ 📼 💾 🎮 📺 🕹️ 📼 💾 🎮 📺 🕹️ 📼 💾 🎮 📺';
-    position: fixed;
-    top: 0;
-    left: -100%;
-    width: 200%;
-    height: 100vh;
-    font-size: 3rem;
-    line-height: 8rem;
-    opacity: 0.15;
-    animation: retroGlitch 10s linear infinite;
-    pointer-events: none;
-    z-index: -1;
-    white-space: nowrap;
-    filter: hue-rotate(45deg);
+    display: none;
 }
 
 .container {
@@ -272,8 +208,8 @@ main {
     border-radius: 15px;
     padding: 30px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    backdrop-filter: blur(10px);
-    transition: all 0.8s ease;
+    /* Remove expensive backdrop-filter on main content */
+    transition: all 0.3s ease;
 }
 
 .poem-section {
@@ -293,12 +229,13 @@ main {
 
 .poem-image {
     width: 100%;
-    max-width: 500px;
-    height: 300px;
-    object-fit: cover;
+    max-width: 400px;
+    height: 400px;
+    object-fit: contain;
     border-radius: 12px;
     box-shadow: 0 8px 25px rgba(0,0,0,0.15);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .poem-image:hover {
@@ -510,61 +447,51 @@ footer {
     100% { transform: translateX(0px); }
 }
 
-/* OPTIMIZED MODE EFFECTS */
+/* SIMPLIFIED MODE EFFECTS - Reduced animations and effects */
 
 /* Metal Mode Header Effects */
 .metal-mode header h1 {
-    color: #ff4444; /* Slightly brighter red for better contrast */
-    text-shadow: 
-        0 0 5px #ff0000,
-        0 0 10px #ff0000; /* Reduced glow intensity */
-    animation: metalGlow 3s ease-in-out infinite alternate;
+    color: #ff4444;
+    text-shadow: 0 0 5px #ff0000;
     font-family: 'Cinzel', serif;
     font-weight: 900;
-    transform: skew(-2deg);
-    will-change: transform;
+    /* Remove expensive skew and animation */
 }
 
 .metal-mode .subtitle {
-    color: #ff7744; /* Brighter orange for better contrast */
-    text-shadow: 0 0 3px #ff6600; /* Reduced text-shadow */
-    animation: flicker 3s infinite;
+    color: #ff7744;
+    text-shadow: 0 0 3px #ff6600;
     text-transform: uppercase;
     letter-spacing: 2px;
-    font-weight: 600; /* Added font weight for better readability */
+    font-weight: 600;
 }
 
 .metal-mode main {
     background: rgba(0, 0, 0, 0.8);
     border: 2px solid #ff0000;
-    box-shadow: 0 0 15px #ff0000;
-    will-change: transform;
+    /* Remove expensive glow effects */
 }
 
 .metal-mode .stanza {
-    background: rgba(26, 26, 26, 0.95); /* Increased opacity for better contrast */
+    background: rgba(26, 26, 26, 0.95);
     border: 2px solid #ff3300;
     border-left: 4px solid #ff0000;
     color: #ffffff;
-    text-shadow: 0 0 1px #ff0000; /* Reduced text-shadow for better readability */
-    font-weight: 500; /* Added font weight for better readability */
+    font-weight: 500;
 }
 
 /* Girly Mode Header Effects */
 .girly-mode header h1 {
     color: #ff1493;
-    text-shadow: 0 0 15px #ff69b4;
-    animation: sparkleGlow 3s ease-in-out infinite;
+    text-shadow: 0 0 5px #ff69b4;
     font-family: 'Dancing Script', cursive;
     font-weight: 700;
-    transform: rotate(-1deg);
-    will-change: transform;
+    /* Remove expensive rotation and animation */
 }
 
 .girly-mode .subtitle {
     color: #ff69b4;
     text-shadow: 0 0 5px #ff69b4;
-    animation: cuteWiggle 4s ease-in-out infinite;
     font-style: italic;
 }
 
@@ -572,8 +499,7 @@ footer {
     background: rgba(255, 182, 193, 0.9);
     border: 3px solid #ff69b4;
     border-radius: 20px;
-    box-shadow: 0 0 20px #ff69b4;
-    animation: heartbeat 3s ease-in-out infinite;
+    /* Remove expensive glow and animation */
 }
 
 .girly-mode .stanza {
@@ -587,18 +513,15 @@ footer {
 /* Space Mode Header Effects */
 .space-mode header h1 {
     color: #00ffff;
-    text-shadow: 0 0 15px #00ffff;
-    animation: cosmicGlow 4s ease-in-out infinite;
+    text-shadow: 0 0 5px #00ffff;
     font-family: 'Orbitron', monospace;
     font-weight: 900;
     letter-spacing: 3px;
-    will-change: transform;
 }
 
 .space-mode .subtitle {
     color: #80ff80;
-    text-shadow: 0 0 8px #80ff80;
-    animation: alienPulse 3s ease-in-out infinite;
+    text-shadow: 0 0 5px #80ff80;
     font-family: 'Exo 2', sans-serif;
     text-transform: uppercase;
 }
@@ -606,8 +529,7 @@ footer {
 .space-mode main {
     background: rgba(15, 52, 96, 0.9);
     border: 2px solid #00ffff;
-    box-shadow: 0 0 25px #00ffff;
-    animation: spaceship 5s ease-in-out infinite;
+    /* Remove expensive glow and animation */
 }
 
 .space-mode .stanza {
@@ -621,20 +543,15 @@ footer {
 /* Retro Mode Header Effects */
 .retro-mode header h1 {
     color: #ffdc00;
-    text-shadow: 
-        2px 2px 0px #ff6b35,
-        0 0 15px #ffdc00;
-    animation: retroGlow 2s ease-in-out infinite alternate;
+    text-shadow: 2px 2px 0px #ff6b35, 0 0 5px #ffdc00;
     font-family: 'Righteous', cursive;
     font-weight: 900;
-    transform: perspective(300px) rotateX(10deg);
-    will-change: transform;
+    /* Remove expensive perspective transform */
 }
 
 .retro-mode .subtitle {
     color: #ff6b35;
     text-shadow: 1px 1px 0px #f7931e;
-    animation: vhsGlitch 3s linear infinite;
     font-family: 'Orbitron', monospace;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -643,7 +560,7 @@ footer {
 .retro-mode main {
     background: rgba(255, 107, 53, 0.1);
     border: 2px solid #ffdc00;
-    box-shadow: 0 0 20px #ffdc00;
+    /* Remove expensive glow */
 }
 
 .retro-mode .stanza {
@@ -678,58 +595,29 @@ footer {
     transform: scale(1.1);
 }
 
-/* OPTIMIZED AUDIO CONTROL THEMING */
+/* SIMPLIFIED AUDIO CONTROL THEMING */
 .metal-mode .audio-toggle {
-    background: radial-gradient(circle, #ff0000 0%, #660000 100%);
+    background: #ff0000;
     color: #ffffff;
     border: 2px solid #ff0000;
-    box-shadow: 0 0 10px #ff0000;
-    animation: metalAudioPulse 3s ease-in-out infinite;
-}
-
-.metal-mode .audio-toggle:hover {
-    background: radial-gradient(circle, #ff3300 0%, #990000 100%);
-    transform: scale(1.1);
-    box-shadow: 0 0 15px #ff0000;
 }
 
 .girly-mode .audio-toggle {
-    background: radial-gradient(circle, #ff69b4 0%, #ff1493 100%);
+    background: #ff69b4;
     color: #ffffff;
     border: 2px solid #ff69b4;
-    box-shadow: 0 0 10px #ff69b4;
-    animation: girlyAudioBounce 2s ease-in-out infinite;
-}
-
-.girly-mode .audio-toggle:hover {
-    background: radial-gradient(circle, #ff1493 0%, #ff69b4 100%);
-    transform: scale(1.2);
 }
 
 .space-mode .audio-toggle {
-    background: radial-gradient(circle, #00ffff 0%, #0080ff 100%);
+    background: #00ffff;
     color: #ffffff;
     border: 2px solid #00ffff;
-    box-shadow: 0 0 15px #00ffff;
-    animation: spaceAudioOrbit 4s linear infinite;
-}
-
-.space-mode .audio-toggle:hover {
-    background: radial-gradient(circle, #0080ff 0%, #00ffff 100%);
-    transform: scale(1.3);
 }
 
 .retro-mode .audio-toggle {
-    background: linear-gradient(45deg, #ffdc00 0%, #ff6b35 50%, #f7931e 100%);
+    background: #ffdc00;
     color: #2c1810;
     border: 2px solid #ffdc00;
-    box-shadow: 0 0 10px #ffdc00;
-    animation: retroAudioGlitch 2.5s linear infinite;
-}
-
-.retro-mode .audio-toggle:hover {
-    background: linear-gradient(45deg, #ff6b35 0%, #ffdc00 50%, #f7931e 100%);
-    transform: scale(1.1);
 }
 
 @keyframes metalAudioPulse {
@@ -800,22 +688,8 @@ footer {
     box-shadow: 0 8px 30px rgba(0,0,0,0.4);
 }
 
-/* EXTREME CURSOR EFFECTS */
-.metal-mode {
-    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ctext y='20' font-size='20'%3E💀%3C/text%3E%3C/svg%3E"), auto;
-}
-
-.girly-mode {
-    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ctext y='20' font-size='20'%3E💖%3C/text%3E%3C/svg%3E"), auto;
-}
-
-.space-mode {
-    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ctext y='20' font-size='20'%3E🚀%3C/text%3E%3C/svg%3E"), auto;
-}
-
-.retro-mode {
-    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ctext y='20' font-size='20'%3E🕹️%3C/text%3E%3C/svg%3E"), auto;
-}
+/* CURSOR EFFECTS - SIMPLIFIED */
+/* Removed expensive custom cursors for performance */
 
 /* EXTREME MODE SPECIFIC STYLING FOR NEW ELEMENTS */
 .metal-mode .mode-indicator {
@@ -912,15 +786,9 @@ footer {
     100% { filter: hue-rotate(360deg); }
 }
 
-/* PARTICLE SYSTEM */
+/* PARTICLE SYSTEM - DISABLED FOR PERFORMANCE */
 .particle-system {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: -2;
+    display: none !important;
 }
 
 /* OPTIMIZED PARTICLE ANIMATIONS */
@@ -1072,6 +940,7 @@ footer {
     
     .poem-image {
         height: 250px;
+        max-width: 250px;
     }
     
     .stanza {
@@ -1095,6 +964,7 @@ footer {
     
     .poem-image {
         height: 200px;
+        max-width: 200px;
     }
     
     .stanza p {
@@ -1102,30 +972,26 @@ footer {
     }
 }
 
-/* OPTIMIZED IMAGE EFFECTS */
+/* SIMPLIFIED IMAGE EFFECTS - Remove expensive filters */
 .metal-mode .poem-image {
-    filter: sepia(50%) hue-rotate(320deg) saturate(1.5) brightness(0.9) contrast(1.3);
     border: 2px solid #ff0000;
-    box-shadow: 0 0 15px #ff0000;
+    /* Remove expensive filter effects */
 }
 
 .girly-mode .poem-image {
-    filter: saturate(1.3) brightness(1.1) contrast(1.05) hue-rotate(10deg);
     border: 3px solid #ff69b4;
     border-radius: 20px;
-    box-shadow: 0 0 20px #ff69b4;
+    /* Remove expensive filter effects */
 }
 
 .space-mode .poem-image {
-    filter: hue-rotate(200deg) saturate(1.2) brightness(0.9) contrast(1.2);
     border: 2px solid #00ffff;
-    box-shadow: 0 0 25px #00ffff;
+    /* Remove expensive filter effects */
 }
 
 .retro-mode .poem-image {
-    filter: sepia(30%) saturate(1.3) brightness(1.05) contrast(1.1) hue-rotate(20deg);
     border: 2px solid #ffdc00;
-    box-shadow: 0 0 20px #ffdc00;
+    /* Remove expensive filter effects */
 }
 
 @keyframes metalImageGlow {
@@ -1167,12 +1033,12 @@ footer {
     text-align: center;
     margin-bottom: 30px;
     padding: 20px;
-    background: rgba(255, 193, 7, 0.1);
+    background: rgba(255, 193, 7, 0.2);
     border: 2px solid #ffc107;
     border-radius: 12px;
     position: relative;
     overflow: hidden;
-    backdrop-filter: blur(5px);
+    /* Remove expensive backdrop-filter */
     transition: all 0.3s ease;
     cursor: pointer;
 }

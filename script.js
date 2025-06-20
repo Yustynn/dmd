@@ -136,10 +136,10 @@ async function loadPoemData() {
 function sampleVersesFromActs(poemDatabase) {
     if (!poemDatabase) return null;
     
-    // Separate verses by act
-    const act1Verses = poemDatabase.filter(verse => verse.act === 'ACT1');
-    const act2Verses = poemDatabase.filter(verse => verse.act === 'ACT2');
-    const act3Verses = poemDatabase.filter(verse => verse.act === 'ACT3');
+    // Separate verses by act (fix act names to match JSON)
+    const act1Verses = poemDatabase.filter(verse => verse.act === 'ACT_1');
+    const act2Verses = poemDatabase.filter(verse => verse.act === 'ACT_2');
+    const act3Verses = poemDatabase.filter(verse => verse.act === 'ACT_3');
     
     // Sample one verse from each act
     const selectedVerses = [];
@@ -148,9 +148,11 @@ function sampleVersesFromActs(poemDatabase) {
         const randomAct1 = act1Verses[Math.floor(Math.random() * act1Verses.length)];
         selectedVerses.push({
             lines: randomAct1.text.split('\n'),
-            act: 'ACT1',
+            act: 'ACT_1',
             notes: randomAct1.notes,
-            preferredImages: getImagesForAct('ACT1')
+            img: randomAct1.img, // Use the specific image from JSON
+            id: randomAct1.id,
+            preferredImages: getImagesForAct('ACT_1')
         });
     }
     
@@ -158,9 +160,11 @@ function sampleVersesFromActs(poemDatabase) {
         const randomAct2 = act2Verses[Math.floor(Math.random() * act2Verses.length)];
         selectedVerses.push({
             lines: randomAct2.text.split('\n'),
-            act: 'ACT2', 
+            act: 'ACT_2', 
             notes: randomAct2.notes,
-            preferredImages: getImagesForAct('ACT2')
+            img: randomAct2.img, // Use the specific image from JSON
+            id: randomAct2.id,
+            preferredImages: getImagesForAct('ACT_2')
         });
     }
     
@@ -168,10 +172,12 @@ function sampleVersesFromActs(poemDatabase) {
         const randomAct3 = act3Verses[Math.floor(Math.random() * act3Verses.length)];
         selectedVerses.push({
             lines: randomAct3.text.split('\n'),
-            act: 'ACT3',
+            act: 'ACT_3',
             notes: randomAct3.notes,
+            img: randomAct3.img, // Use the specific image from JSON
+            id: randomAct3.id,
             ending_type: randomAct3.ending_type,
-            preferredImages: getImagesForAct('ACT3')
+            preferredImages: getImagesForAct('ACT_3')
         });
     }
     
@@ -181,11 +187,11 @@ function sampleVersesFromActs(poemDatabase) {
 // Function to get appropriate images for each act
 function getImagesForAct(act) {
     switch(act) {
-        case 'ACT1':
+        case 'ACT_1':
             return ['tech', 'digital', 'screens'];
-        case 'ACT2': 
+        case 'ACT_2': 
             return ['battle', 'chaos', 'conflict'];
-        case 'ACT3':
+        case 'ACT_3':
             return ['resolution', 'peace', 'ending'];
         default:
             return ['abstract', 'artistic', 'modern'];
@@ -356,200 +362,36 @@ function selectRandomMode() {
     return currentMode;
 }
 
-// Function to apply mode styling
+// Function to apply mode styling - OPTIMIZED
 function applyModeStyles(mode) {
     const modeConfig = modes[mode];
     if (!modeConfig) return;
     
-    // Apply mode class to body for extreme theming
+    // Apply mode class to body for theming (CSS handles the rest)
     document.body.className = '';
     document.body.classList.add(`${mode}-mode`);
     
-    // Create or update mode styles
-    let modeStyleSheet = document.getElementById('mode-styles');
-    if (!modeStyleSheet) {
-        modeStyleSheet = document.createElement('style');
-        modeStyleSheet.id = 'mode-styles';
-        document.head.appendChild(modeStyleSheet);
-    }
+    // Remove expensive dynamic CSS injection - let CSS handle styling
+    // Just update the mode indicator text
+    const existing = document.querySelector('.mode-indicator');
+    if (existing) existing.remove();
     
-    // Add Google Fonts import
-    let fontLink = document.getElementById('mode-fonts');
-    if (!fontLink) {
-        fontLink = document.createElement('link');
-        fontLink.id = 'mode-fonts';
-        fontLink.rel = 'stylesheet';
-        document.head.appendChild(fontLink);
-    }
-    
-    // Set font imports based on mode
-    let fontImports = '';
-    switch(mode) {
-        case 'metal':
-            fontImports = 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Roboto+Condensed:wght@300;400;700&display=swap';
-            break;
-        case 'girly':
-            fontImports = 'https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&family=Quicksand:wght@300;400;600&display=swap';
-            break;
-        case 'retro':
-            fontImports = 'https://fonts.googleapis.com/css2?family=Righteous&family=Orbitron:wght@400;700;900&display=swap';
-            break;
-        case 'space':
-            fontImports = 'https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap';
-            break;
-    }
-    fontLink.href = fontImports;
-    
-    const styles = `
-        body {
-            background: ${modeConfig.background} !important;
-            font-family: ${modeConfig.fonts.body} !important;
-            color: ${modeConfig.colors.text} !important;
-        }
-        
-        header h1 {
-            font-family: ${modeConfig.fonts.heading} !important;
-            color: ${modeConfig.colors.primary} !important;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3) !important;
-        }
-        
-        .subtitle {
-            color: ${modeConfig.colors.secondary} !important;
-            font-family: ${modeConfig.fonts.body} !important;
-        }
-        
-        main {
-            background: rgba(255, 255, 255, ${mode === 'metal' ? '0.1' : '0.9'}) !important;
-            border: 2px solid ${modeConfig.colors.accent} !important;
-            ${mode === 'metal' ? 'box-shadow: 0 0 20px rgba(255, 0, 0, 0.3) !important;' : ''}
-            ${mode === 'space' ? 'box-shadow: 0 0 30px rgba(83, 52, 131, 0.5) !important;' : ''}
-        }
-        
-        .stanza {
-            background: ${mode === 'metal' ? 'rgba(0, 0, 0, 0.8)' : 
-                        mode === 'girly' ? 'rgba(255, 182, 193, 0.3)' :
-                        mode === 'retro' ? 'rgba(255, 220, 0, 0.2)' :
-                        'rgba(15, 52, 96, 0.2)'} !important;
-            border-left: 4px solid ${modeConfig.colors.primary} !important;
-            color: ${modeConfig.colors.text} !important;
-        }
-        
-        .poem-image {
-            ${mode === 'metal' ? 'filter: contrast(1.2) brightness(0.8) !important;' : ''}
-            ${mode === 'girly' ? 'filter: saturate(1.3) brightness(1.1) !important;' : ''}
-            ${mode === 'retro' ? 'filter: sepia(0.3) saturate(1.2) !important;' : ''}
-            ${mode === 'space' ? 'filter: hue-rotate(240deg) contrast(1.1) !important;' : ''}
-        }
-        
-        #regenerate-btn {
-            background: linear-gradient(135deg, ${modeConfig.colors.primary}, ${modeConfig.colors.secondary}) !important;
-            color: ${mode === 'metal' ? '#ffffff' : 
-                   mode === 'girly' ? '#ffffff' :
-                   mode === 'retro' ? '#000000' :
-                   '#ffffff'} !important;
-        }
-        
-        .mode-indicator {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: ${modeConfig.colors.primary};
-            color: ${mode === 'retro' ? '#000000' : '#ffffff'};
-            padding: 10px 15px;
-            border-radius: 20px;
-            font-family: ${modeConfig.fonts.body};
-            font-weight: bold;
-            z-index: 1000;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-    `;
-    
-    modeStyleSheet.textContent = styles;
+    const indicator = document.createElement('div');
+    indicator.className = 'mode-indicator';
+    indicator.textContent = modes[mode].name;
+    document.body.appendChild(indicator);
 }
 
-// Function to create and play audio
+// Function to create and play audio - SIMPLIFIED
 function playModeMusic(mode) {
-    // Remove existing audio and clean up event listeners
-    const existingAudio = document.getElementById('mode-audio');
-    if (existingAudio) {
-        existingAudio.pause();
-        existingAudio.currentTime = 0;
-        existingAudio.removeEventListener('ended', null);
-        existingAudio.removeEventListener('error', null);
-        existingAudio.remove();
-    }
-    
-    // Create new audio element
-    const audio = document.createElement('audio');
-    audio.id = 'mode-audio';
-    audio.loop = true;
-    audio.volume = 0.3;
-    
-    // For demo purposes, we'll use a data URL for a silent audio file
-    // In a real implementation, you'd use actual song URLs
-    const silentAudio = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
-    
-    // Create source element
-    const source = document.createElement('source');
-    source.src = silentAudio; // Replace with actual song URLs
-    source.type = 'audio/wav';
-    
-    audio.appendChild(source);
-    document.body.appendChild(audio);
-    
-    // Attempt to play (browsers may block autoplay)
-    audio.play().catch(e => {
-        console.log('Autoplay blocked - user interaction required');
-        // Add click handler to play music (with proper cleanup)
-        const playOnClick = function() {
-            audio.play();
-            document.removeEventListener('click', playOnClick);
-        };
-        document.addEventListener('click', playOnClick, { once: true });
-    });
+    // Audio disabled for performance - users can enable if desired
+    return;
 }
 
-// Function to add audio controls
+// Function to add audio controls - SIMPLIFIED
 function addAudioControls() {
-    // Remove existing controls to prevent duplicates
-    const existingControls = document.querySelector('.audio-controls');
-    if (existingControls) {
-        existingControls.remove();
-    }
-    
-    const controlsContainer = document.createElement('div');
-    controlsContainer.className = 'audio-controls';
-    
-    const toggleButton = document.createElement('button');
-    toggleButton.className = 'audio-toggle';
-    toggleButton.innerHTML = '🔊';
-    toggleButton.title = 'Toggle Music';
-    
-    let isPlaying = true;
-    
-    // Store the event handler so we can remove it later
-    const clickHandler = () => {
-        const audio = document.getElementById('mode-audio');
-        if (audio) {
-            if (isPlaying) {
-                audio.pause();
-                toggleButton.innerHTML = '🔇';
-                isPlaying = false;
-            } else {
-                audio.play().catch(e => console.log('Audio play failed:', e));
-                toggleButton.innerHTML = '🔊';
-                isPlaying = true;
-            }
-        }
-    };
-    
-    toggleButton.addEventListener('click', clickHandler);
-    
-    // Store reference for cleanup
-    toggleButton._clickHandler = clickHandler;
-    
-    controlsContainer.appendChild(toggleButton);
-    document.body.appendChild(controlsContainer);
+    // Audio controls disabled for performance
+    return;
 }
 
 // Function to add mode indicator
@@ -576,11 +418,19 @@ function shuffleArray(array) {
 
 // Function to get a random image for a stanza
 function getRandomImageForStanza(stanza, usedImages = []) {
-    const poemData = getPoemData();
+    // If the stanza has a specific image from the JSON, use it first
+    if (stanza.img) {
+        return {
+            src: stanza.img,
+            alt: `Image for ${stanza.act} - ${stanza.notes || 'stanza'}`,
+            type: 'story-specific'
+        };
+    }
     
+    // Fallback to the original logic for older stanzas without specific images
     // First try to find images that match the stanza's preferred types
     const preferredImages = imagePool.filter(img => 
-        stanza.preferredImages.includes(img.type) && 
+        stanza.preferredImages && stanza.preferredImages.includes(img.type) && 
         !usedImages.includes(img.src)
     );
     
@@ -674,54 +524,63 @@ function createStanzaElement(stanza, imageData, index) {
     return section;
 }
 
-// Function to animate elements into view
+// Function to animate elements into view - OPTIMIZED
 function animateElementIn(element, delay = 0) {
-    setTimeout(() => {
-        element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        element.style.opacity = '1';
-        element.style.transform = 'translateY(0)';
-    }, delay);
+    // Use CSS transitions instead of timeout for better performance
+    element.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    element.style.opacity = '0';
+    element.style.transform = 'translateY(10px)';
+    
+    // Use requestAnimationFrame for smooth animation
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            element.style.opacity = '1';
+            element.style.transform = 'translateY(0)';
+        });
+    });
 }
 
-// Function to generate and insert the poem
+// Function to generate and insert the poem - OPTIMIZED
 async function generatePoem() {
     const container = document.getElementById('poem-container');
     if (!container) return;
     
-    // Get current poem data based on mode and JSON sampling
-    const poemData = await getPoemData();
-    
-    // Clear existing content
-    container.innerHTML = '';
-    
-    // Add loading indicator
-    container.innerHTML = '<div class="loading">Loading poem...</div>';
-    
-    // Create main element
-    const main = document.createElement('main');
-    
-    const usedImages = [];
-    
-    // Create stanzas with randomized images
-    poemData.stanzas.forEach((stanza, index) => {
-        const imageData = getRandomImageForStanza(stanza, usedImages);
-        usedImages.push(imageData.src);
+    try {
+        // Get current poem data based on mode and JSON sampling
+        const poemData = await getPoemData();
         
-        const stanzaElement = createStanzaElement(stanza, imageData, index);
-        main.appendChild(stanzaElement);
-    });
-    
-    // Replace loading with actual content
-    setTimeout(() => {
+        // Clear existing content efficiently
         container.innerHTML = '';
-        container.appendChild(main);
         
-        // Animate stanzas in sequence
+        // Create main element with document fragment for better performance
+        const fragment = document.createDocumentFragment();
+        const main = document.createElement('main');
+        
+        const usedImages = [];
+        
+        // Create stanzas with optimized image selection
+        poemData.stanzas.forEach((stanza, index) => {
+            const imageData = getRandomImageForStanza(stanza, usedImages);
+            usedImages.push(imageData.src);
+            
+            const stanzaElement = createStanzaElement(stanza, imageData, index);
+            main.appendChild(stanzaElement);
+        });
+        
+        fragment.appendChild(main);
+        container.appendChild(fragment);
+        
+        // Animate stanzas efficiently
         const stanzas = main.querySelectorAll('.poem-section');
         stanzas.forEach((stanza, index) => {
-            animateElementIn(stanza, index * 200);
+            // Stagger animation with requestAnimationFrame
+            setTimeout(() => animateElementIn(stanza), index * 100);
         });
-    }, 500);
+        
+    } catch (error) {
+        console.error('Error generating poem:', error);
+        container.innerHTML = '<div class="error">Failed to load poem. Please refresh.</div>';
+    }
 }
 
 // Function to regenerate poem with new random images and/or mode
@@ -800,255 +659,88 @@ function addRegenerateButton() {
     container.insertBefore(buttonContainer, footer);
 }
 
-// Initialize the poem when the page loads
+// OPTIMIZED Initialize the poem when the page loads
 document.addEventListener('DOMContentLoaded', async () => {
-    // Performance optimization: disable animations on slower devices
-    const isSlowDevice = navigator.hardwareConcurrency <= 2 || navigator.deviceMemory <= 4;
-    if (isSlowDevice) {
-        document.body.classList.add('reduced-motion');
-    }
-    
-    // Load Australian slogan first
-    await loadAussieSlogan();
-    
-    // Setup slogan click handler
-    setupSloganClickHandler();
-    
-    // Select random mode
-    selectRandomMode();
-    
-    // Apply mode styles and extreme theming
-    applyModeStyles(currentMode);
-    updateExtremeElements(currentMode);
-    
-    // Add mode indicator
-    addModeIndicator(currentMode);
-    
-    // Generate poem first to get the title/subtitle
-    await generatePoem();
-    
-    // Update title and subtitle based on mode and sampled verses
-    const poemData = await getPoemData();
-    updateExtremeHeader(currentMode, poemData);
-    
-    // Add regenerate button functionality
-    setupRegenerateButton();
-    
-    // Add audio controls
-    addAudioControls();
-    
-    // Play mode music
-    playModeMusic(currentMode);
-    
-    // Initialize particle system (but not on slow devices)
-    if (!isSlowDevice) {
-        initializeParticleSystem(currentMode);
+    try {
+        // Load Australian slogan first
+        await loadAussieSlogan();
+        
+        // Setup slogan click handler
+        setupSloganClickHandler();
+        
+        // Select random mode
+        selectRandomMode();
+        
+        // Apply mode styles (simplified)
+        applyModeStyles(currentMode);
+        
+        // Generate poem and get data
+        await generatePoem();
+        const poemData = await getPoemData();
+        updateExtremeHeader(currentMode, poemData);
+        
+        // Add regenerate button functionality
+        setupRegenerateButton();
+        
+    } catch (error) {
+        console.error('Error initializing application:', error);
+        // Fallback: still try to load basic poem
+        await generatePoem();
     }
 });
 
-// Function to update extreme header based on mode
+// Function to update extreme header based on mode - SIMPLIFIED
 function updateExtremeHeader(mode, poemData) {
     const h1 = document.querySelector('header h1');
     const subtitle = document.querySelector('.subtitle');
     
-    const extremeTitles = {
-        metal: `💀🔥 ${poemData.title.toUpperCase()} 🔥💀`,
-        girly: `💖✨ ${poemData.title} ✨💖`,
-        space: `🚀🌟 ${poemData.title.toUpperCase()} 🌟🚀`,
-        retro: `🕹️📼 ${poemData.title.toUpperCase()} 📼🕹️`
-    };
-    
-    const extremeSubtitles = {
-        metal: `⚡ ${poemData.subtitle.toUpperCase()} ⚡`,
-        girly: `🌈 ${poemData.subtitle} 🌈`,
-        space: `🛸 ${poemData.subtitle.toUpperCase()} 🛸`,
-        retro: `💾 ${poemData.subtitle.toUpperCase()} 💾`
-    };
-    
-    h1.textContent = extremeTitles[mode] || poemData.title;
-    subtitle.textContent = extremeSubtitles[mode] || poemData.subtitle;
+    if (h1) h1.textContent = poemData.title;
+    if (subtitle) subtitle.textContent = poemData.subtitle;
 }
 
-// Function to update extreme elements
-function updateExtremeElements(mode) {
-    const modeNameElement = document.getElementById('mode-name');
-    const modeEmojiElement = document.getElementById('mode-emoji');
-    
-    const modeNames = {
-        metal: '💀 DEATH METAL MODE 💀',
-        girly: '💖 KAWAII PRINCESS MODE 💖',
-        space: '🚀 COSMIC VOYAGE MODE 🚀',
-        retro: '🕹️ RADICAL 80S MODE 🕹️'
-    };
-    
-    const modeEmojis = {
-        metal: '⚡💀⚡',
-        girly: '✨💕✨',
-        space: '🌌🛸🌌',
-        retro: '📼🎮📼'
-    };
-    
-    if (modeNameElement) {
-        modeNameElement.textContent = modeNames[mode] || '🎭 UNKNOWN MODE';
-    }
-    if (modeEmojiElement) {
-        modeEmojiElement.textContent = modeEmojis[mode] || '⚡';
-    }
-}
-
-// Function to setup regenerate button
+// Function to setup regenerate button - OPTIMIZED
 function setupRegenerateButton() {
     const regenerateBtn = document.getElementById('regenerate-btn');
     if (regenerateBtn) {
         // Remove existing event listeners to prevent memory leaks
-        const existingHandler = regenerateBtn._clickHandler;
-        if (existingHandler) {
-            regenerateBtn.removeEventListener('click', existingHandler);
-        }
+        regenerateBtn.replaceWith(regenerateBtn.cloneNode(true));
+        const newBtn = document.getElementById('regenerate-btn');
         
-        // Create new event handler
+        // Create optimized event handler
         const clickHandler = async () => {
             // Prevent multiple clicks
-            if (regenerateBtn.disabled) return;
-            regenerateBtn.disabled = true;
-            regenerateBtn.textContent = 'Regenerating...';
-            
-            // Add extreme click effect
-            regenerateBtn.style.transform = 'scale(0.9) rotate(10deg)';
-            setTimeout(() => {
-                regenerateBtn.style.transform = '';
-            }, 150);
+            if (newBtn.disabled) return;
+            newBtn.disabled = true;
+            newBtn.textContent = 'Regenerating...';
             
             try {
-                // Clean up existing systems
-                cleanupParticleSystem();
-                
                 // Load new Australian slogan
                 await updateAussieSlogan();
                 
-                // Regenerate with new mode
+                // Regenerate with new mode  
                 selectRandomMode();
                 applyModeStyles(currentMode);
-                updateExtremeElements(currentMode);
                 
                 await generatePoem();
                 const poemData = await getPoemData();
                 updateExtremeHeader(currentMode, poemData);
                 
-                // Restart particle system
-                initializeParticleSystem(currentMode);
-                
-                // Play new mode music
-                playModeMusic(currentMode);
-                
             } catch (error) {
                 console.error('Error regenerating poem:', error);
             } finally {
-                regenerateBtn.disabled = false;
-                regenerateBtn.textContent = 'Randomize';
+                newBtn.disabled = false;
+                newBtn.textContent = 'Randomize';
             }
         };
         
-        // Store reference for cleanup
-        regenerateBtn._clickHandler = clickHandler;
-        regenerateBtn.addEventListener('click', clickHandler);
+        newBtn.addEventListener('click', clickHandler);
     }
 }
 
-// Function to initialize particle system
+// Function to initialize particle system - DISABLED FOR PERFORMANCE
 function initializeParticleSystem(mode) {
-    const particleSystem = document.getElementById('particle-system');
-    if (!particleSystem) return;
-    
-    // Clear existing particles and stop any running animations
-    const existingParticles = particleSystem.querySelectorAll('div');
-    existingParticles.forEach(particle => {
-        particle.style.animation = 'none';
-        particle.remove();
-    });
-    particleSystem.innerHTML = '';
-    
-    // Reduced particle counts for better performance
-    const particleConfigs = {
-        metal: { emoji: '💀⚡🔥', count: 6, speed: 2 },  // Reduced from 8
-        girly: { emoji: '💖✨🌈', count: 8, speed: 1.5 }, // Reduced from 10
-        space: { emoji: '⭐🌟💫', count: 8, speed: 1 },   // Reduced from 12
-        retro: { emoji: '🕹️💾📼', count: 4, speed: 3 }   // Reduced from 6
-    };
-    
-    const config = particleConfigs[mode] || particleConfigs.space;
-    const emojis = config.emoji.match(/./gu); // Split emojis properly
-    
-    // Use requestAnimationFrame for better performance instead of CSS animations
-    const particles = [];
-    
-    for (let i = 0; i < config.count; i++) {
-        const particle = document.createElement('div');
-        particle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-        particle.style.position = 'absolute';
-        particle.style.fontSize = Math.random() * 10 + 10 + 'px'; // Smaller particles
-        particle.style.left = Math.random() * 100 + '%';
-        particle.style.top = Math.random() * 100 + '%';
-        particle.style.opacity = Math.random() * 0.4 + 0.2; // Reduced opacity
-        particle.style.pointerEvents = 'none';
-        particle.style.willChange = 'transform';
-        particle.style.transform = 'translateZ(0)'; // Force hardware acceleration
-        
-        // Store animation properties for JS-based animation
-        particle._x = Math.random() * 100;
-        particle._y = Math.random() * 100;
-        particle._vx = (Math.random() - 0.5) * config.speed;
-        particle._vy = (Math.random() - 0.5) * config.speed;
-        particle._opacity = Math.random() * 0.4 + 0.2;
-        particle._opacityDirection = Math.random() > 0.5 ? 1 : -1;
-        
-        particles.push(particle);
-        particleSystem.appendChild(particle);
-    }
-    
-    // Store particles reference for cleanup
-    particleSystem._particles = particles;
-    particleSystem._animationId = null;
-    
-    // Animate particles with requestAnimationFrame (more performant)
-    let lastTime = 0;
-    const animateParticles = (currentTime) => {
-        if (currentTime - lastTime < 50) { // Limit to ~20fps for performance
-            particleSystem._animationId = requestAnimationFrame(animateParticles);
-            return;
-        }
-        lastTime = currentTime;
-        
-        particles.forEach(particle => {
-            particle._x += particle._vx * 0.1;
-            particle._y += particle._vy * 0.1;
-            particle._opacity += particle._opacityDirection * 0.01;
-            
-            // Bounce off edges
-            if (particle._x <= 0 || particle._x >= 100) particle._vx *= -1;
-            if (particle._y <= 0 || particle._y >= 100) particle._vy *= -1;
-            
-            // Reverse opacity direction
-            if (particle._opacity <= 0.1 || particle._opacity >= 0.5) {
-                particle._opacityDirection *= -1;
-            }
-            
-            // Keep within bounds
-            particle._x = Math.max(0, Math.min(100, particle._x));
-            particle._y = Math.max(0, Math.min(100, particle._y));
-            particle._opacity = Math.max(0.1, Math.min(0.5, particle._opacity));
-            
-            // Apply styles
-            particle.style.left = particle._x + '%';
-            particle.style.top = particle._y + '%';
-            particle.style.opacity = particle._opacity;
-        });
-        
-        particleSystem._animationId = requestAnimationFrame(animateParticles);
-    };
-    
-    // Start animation
-    particleSystem._animationId = requestAnimationFrame(animateParticles);
+    // Particle system completely disabled for better performance
+    return;
 }
 
 // Function to cleanup particle system
@@ -1060,54 +752,16 @@ function cleanupParticleSystem() {
     }
 }
 
-// Global cleanup function to prevent memory leaks
+// SIMPLIFIED cleanup function
 function cleanup() {
-    // Cleanup particle system
-    cleanupParticleSystem();
-    
-    // Cleanup audio
-    const audio = document.getElementById('mode-audio');
-    if (audio) {
-        audio.pause();
-        audio.currentTime = 0;
-        audio.remove();
-    }
-    
-    // Cleanup event listeners
+    // Simplified cleanup - most systems are now disabled
     const regenerateBtn = document.getElementById('regenerate-btn');
-    if (regenerateBtn && regenerateBtn._clickHandler) {
-        regenerateBtn.removeEventListener('click', regenerateBtn._clickHandler);
-        regenerateBtn._clickHandler = null;
-    }
-    
-    const audioToggle = document.querySelector('.audio-toggle');
-    if (audioToggle && audioToggle._clickHandler) {
-        audioToggle.removeEventListener('click', audioToggle._clickHandler);
-        audioToggle._clickHandler = null;
+    if (regenerateBtn) {
+        regenerateBtn.replaceWith(regenerateBtn.cloneNode(true));
     }
 }
 
-// Performance monitoring (development only)
-if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    let performanceTimer;
-    function logPerformance(operation) {
-        if (performanceTimer) {
-            console.log(`Performance: ${operation} took ${Date.now() - performanceTimer}ms`);
-        }
-        performanceTimer = Date.now();
-    }
-    
-    // Monitor performance of key operations
-    const originalGeneratePoem = generatePoem;
-    generatePoem = async function() {
-        logPerformance('generatePoem start');
-        const result = await originalGeneratePoem.call(this);
-        logPerformance('generatePoem end');
-        return result;
-    };
-}
-
-// Cleanup on page unload
+// Simplified cleanup on page unload
 window.addEventListener('beforeunload', cleanup);
 
 // Function to load and display a random Australian slogan
@@ -1148,7 +802,7 @@ async function updateAussieSlogan() {
     }
 }
 
-// Add click handler to the slogan for regeneration
+// Add click handler to the slogan for regeneration - OPTIMIZED
 function setupSloganClickHandler() {
     const sloganElement = document.getElementById('aussie-slogan');
     if (sloganElement) {
@@ -1159,17 +813,11 @@ function setupSloganClickHandler() {
             const sloganText = sloganElement.querySelector('.slogan-text');
             if (sloganText) {
                 sloganText.textContent = 'Getting new wisdom...';
-                sloganElement.style.transform = 'scale(0.98)';
-                setTimeout(() => {
-                    sloganElement.style.transform = '';
-                }, 150);
-                
                 await updateAussieSlogan();
             }
         };
         
         sloganElement.addEventListener('click', clickHandler);
-        sloganElement._clickHandler = clickHandler;
     }
 }
 
