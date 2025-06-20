@@ -103,20 +103,20 @@ const basePoemData = {
 // Mode-specific poem variations (will be replaced by JSON sampling)
 const modePoems = {
     metal: {
-        title: "Storm's Rage",
-        subtitle: "A symphony of darkness"
+        title: "Dog+Me+Daddy",
+        subtitle: "A marketing adventure against blurbo"
     },
     girly: {
-        title: "Fairy Dreams", 
-        subtitle: "A tale of magic and wonder"
+        title: "Dog+Me+Daddy",
+        subtitle: "A marketing adventure against blurbo"
     },
     retro: {
-        title: "Neon Nights",
-        subtitle: "A blast from the past"
+        title: "Dog+Me+Daddy",
+        subtitle: "A marketing adventure against blurbo"
     },
     space: {
-        title: "Cosmic Voyage",
-        subtitle: "A journey through the stars"
+        title: "Dog+Me+Daddy",
+        subtitle: "A marketing adventure against blurbo"
     }
 };
 
