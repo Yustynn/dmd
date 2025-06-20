@@ -361,6 +361,10 @@ function applyModeStyles(mode) {
     const modeConfig = modes[mode];
     if (!modeConfig) return;
     
+    // Apply mode class to body for extreme theming
+    document.body.className = '';
+    document.body.classList.add(`${mode}-mode`);
+    
     // Create or update mode styles
     let modeStyleSheet = document.getElementById('mode-styles');
     if (!modeStyleSheet) {
@@ -382,7 +386,7 @@ function applyModeStyles(mode) {
     let fontImports = '';
     switch(mode) {
         case 'metal':
-            fontImports = 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Roboto+Condensed:wght@300;400;700&display=swap';
+            fontImports = 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Roboto+Condensed:wght@300;400;700&display=swap';
             break;
         case 'girly':
             fontImports = 'https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&family=Quicksand:wght@300;400;600&display=swap';
@@ -465,10 +469,13 @@ function applyModeStyles(mode) {
 
 // Function to create and play audio
 function playModeMusic(mode) {
-    // Remove existing audio
+    // Remove existing audio and clean up event listeners
     const existingAudio = document.getElementById('mode-audio');
     if (existingAudio) {
         existingAudio.pause();
+        existingAudio.currentTime = 0;
+        existingAudio.removeEventListener('ended', null);
+        existingAudio.removeEventListener('error', null);
         existingAudio.remove();
     }
     
@@ -493,16 +500,23 @@ function playModeMusic(mode) {
     // Attempt to play (browsers may block autoplay)
     audio.play().catch(e => {
         console.log('Autoplay blocked - user interaction required');
-        // Add click handler to play music
-        document.addEventListener('click', function playOnClick() {
+        // Add click handler to play music (with proper cleanup)
+        const playOnClick = function() {
             audio.play();
             document.removeEventListener('click', playOnClick);
-        }, { once: true });
+        };
+        document.addEventListener('click', playOnClick, { once: true });
     });
 }
 
 // Function to add audio controls
 function addAudioControls() {
+    // Remove existing controls to prevent duplicates
+    const existingControls = document.querySelector('.audio-controls');
+    if (existingControls) {
+        existingControls.remove();
+    }
+    
     const controlsContainer = document.createElement('div');
     controlsContainer.className = 'audio-controls';
     
@@ -513,7 +527,8 @@ function addAudioControls() {
     
     let isPlaying = true;
     
-    toggleButton.addEventListener('click', () => {
+    // Store the event handler so we can remove it later
+    const clickHandler = () => {
         const audio = document.getElementById('mode-audio');
         if (audio) {
             if (isPlaying) {
@@ -521,12 +536,17 @@ function addAudioControls() {
                 toggleButton.innerHTML = '🔇';
                 isPlaying = false;
             } else {
-                audio.play();
+                audio.play().catch(e => console.log('Audio play failed:', e));
                 toggleButton.innerHTML = '🔊';
                 isPlaying = true;
             }
         }
-    });
+    };
+    
+    toggleButton.addEventListener('click', clickHandler);
+    
+    // Store reference for cleanup
+    toggleButton._clickHandler = clickHandler;
     
     controlsContainer.appendChild(toggleButton);
     document.body.appendChild(controlsContainer);
@@ -782,11 +802,24 @@ function addRegenerateButton() {
 
 // Initialize the poem when the page loads
 document.addEventListener('DOMContentLoaded', async () => {
+    // Performance optimization: disable animations on slower devices
+    const isSlowDevice = navigator.hardwareConcurrency <= 2 || navigator.deviceMemory <= 4;
+    if (isSlowDevice) {
+        document.body.classList.add('reduced-motion');
+    }
+    
+    // Load Australian slogan first
+    await loadAussieSlogan();
+    
+    // Setup slogan click handler
+    setupSloganClickHandler();
+    
     // Select random mode
     selectRandomMode();
     
-    // Apply mode styles
+    // Apply mode styles and extreme theming
     applyModeStyles(currentMode);
+    updateExtremeElements(currentMode);
     
     // Add mode indicator
     addModeIndicator(currentMode);
@@ -796,32 +829,347 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // Update title and subtitle based on mode and sampled verses
     const poemData = await getPoemData();
-    document.querySelector('header h1').textContent = poemData.title;
-    document.querySelector('.subtitle').textContent = poemData.subtitle;
+    updateExtremeHeader(currentMode, poemData);
     
-    // Add regenerate button
-    addRegenerateButton();
+    // Add regenerate button functionality
+    setupRegenerateButton();
     
     // Add audio controls
     addAudioControls();
     
     // Play mode music
     playModeMusic(currentMode);
+    
+    // Initialize particle system (but not on slow devices)
+    if (!isSlowDevice) {
+        initializeParticleSystem(currentMode);
+    }
 });
 
-// Add some CSS for the loading indicator
-const style = document.createElement('style');
-style.textContent = `
-    .loading {
-        text-align: center;
-        padding: 50px;
-        font-size: 1.2rem;
-        color: #7f8c8d;
-        font-style: italic;
+// Function to update extreme header based on mode
+function updateExtremeHeader(mode, poemData) {
+    const h1 = document.querySelector('header h1');
+    const subtitle = document.querySelector('.subtitle');
+    
+    const extremeTitles = {
+        metal: `💀🔥 ${poemData.title.toUpperCase()} 🔥💀`,
+        girly: `💖✨ ${poemData.title} ✨💖`,
+        space: `🚀🌟 ${poemData.title.toUpperCase()} 🌟🚀`,
+        retro: `🕹️📼 ${poemData.title.toUpperCase()} 📼🕹️`
+    };
+    
+    const extremeSubtitles = {
+        metal: `⚡ ${poemData.subtitle.toUpperCase()} ⚡`,
+        girly: `🌈 ${poemData.subtitle} 🌈`,
+        space: `🛸 ${poemData.subtitle.toUpperCase()} 🛸`,
+        retro: `💾 ${poemData.subtitle.toUpperCase()} 💾`
+    };
+    
+    h1.textContent = extremeTitles[mode] || poemData.title;
+    subtitle.textContent = extremeSubtitles[mode] || poemData.subtitle;
+}
+
+// Function to update extreme elements
+function updateExtremeElements(mode) {
+    const modeNameElement = document.getElementById('mode-name');
+    const modeEmojiElement = document.getElementById('mode-emoji');
+    
+    const modeNames = {
+        metal: '💀 DEATH METAL MODE 💀',
+        girly: '💖 KAWAII PRINCESS MODE 💖',
+        space: '🚀 COSMIC VOYAGE MODE 🚀',
+        retro: '🕹️ RADICAL 80S MODE 🕹️'
+    };
+    
+    const modeEmojis = {
+        metal: '⚡💀⚡',
+        girly: '✨💕✨',
+        space: '🌌🛸🌌',
+        retro: '📼🎮📼'
+    };
+    
+    if (modeNameElement) {
+        modeNameElement.textContent = modeNames[mode] || '🎭 UNKNOWN MODE';
+    }
+    if (modeEmojiElement) {
+        modeEmojiElement.textContent = modeEmojis[mode] || '⚡';
+    }
+}
+
+// Function to setup regenerate button
+function setupRegenerateButton() {
+    const regenerateBtn = document.getElementById('regenerate-btn');
+    if (regenerateBtn) {
+        // Remove existing event listeners to prevent memory leaks
+        const existingHandler = regenerateBtn._clickHandler;
+        if (existingHandler) {
+            regenerateBtn.removeEventListener('click', existingHandler);
+        }
+        
+        // Create new event handler
+        const clickHandler = async () => {
+            // Prevent multiple clicks
+            if (regenerateBtn.disabled) return;
+            regenerateBtn.disabled = true;
+            regenerateBtn.textContent = 'Regenerating...';
+            
+            // Add extreme click effect
+            regenerateBtn.style.transform = 'scale(0.9) rotate(10deg)';
+            setTimeout(() => {
+                regenerateBtn.style.transform = '';
+            }, 150);
+            
+            try {
+                // Clean up existing systems
+                cleanupParticleSystem();
+                
+                // Load new Australian slogan
+                await updateAussieSlogan();
+                
+                // Regenerate with new mode
+                selectRandomMode();
+                applyModeStyles(currentMode);
+                updateExtremeElements(currentMode);
+                
+                await generatePoem();
+                const poemData = await getPoemData();
+                updateExtremeHeader(currentMode, poemData);
+                
+                // Restart particle system
+                initializeParticleSystem(currentMode);
+                
+                // Play new mode music
+                playModeMusic(currentMode);
+                
+            } catch (error) {
+                console.error('Error regenerating poem:', error);
+            } finally {
+                regenerateBtn.disabled = false;
+                regenerateBtn.textContent = 'Randomize';
+            }
+        };
+        
+        // Store reference for cleanup
+        regenerateBtn._clickHandler = clickHandler;
+        regenerateBtn.addEventListener('click', clickHandler);
+    }
+}
+
+// Function to initialize particle system
+function initializeParticleSystem(mode) {
+    const particleSystem = document.getElementById('particle-system');
+    if (!particleSystem) return;
+    
+    // Clear existing particles and stop any running animations
+    const existingParticles = particleSystem.querySelectorAll('div');
+    existingParticles.forEach(particle => {
+        particle.style.animation = 'none';
+        particle.remove();
+    });
+    particleSystem.innerHTML = '';
+    
+    // Reduced particle counts for better performance
+    const particleConfigs = {
+        metal: { emoji: '💀⚡🔥', count: 6, speed: 2 },  // Reduced from 8
+        girly: { emoji: '💖✨🌈', count: 8, speed: 1.5 }, // Reduced from 10
+        space: { emoji: '⭐🌟💫', count: 8, speed: 1 },   // Reduced from 12
+        retro: { emoji: '🕹️💾📼', count: 4, speed: 3 }   // Reduced from 6
+    };
+    
+    const config = particleConfigs[mode] || particleConfigs.space;
+    const emojis = config.emoji.match(/./gu); // Split emojis properly
+    
+    // Use requestAnimationFrame for better performance instead of CSS animations
+    const particles = [];
+    
+    for (let i = 0; i < config.count; i++) {
+        const particle = document.createElement('div');
+        particle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        particle.style.position = 'absolute';
+        particle.style.fontSize = Math.random() * 10 + 10 + 'px'; // Smaller particles
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = Math.random() * 100 + '%';
+        particle.style.opacity = Math.random() * 0.4 + 0.2; // Reduced opacity
+        particle.style.pointerEvents = 'none';
+        particle.style.willChange = 'transform';
+        particle.style.transform = 'translateZ(0)'; // Force hardware acceleration
+        
+        // Store animation properties for JS-based animation
+        particle._x = Math.random() * 100;
+        particle._y = Math.random() * 100;
+        particle._vx = (Math.random() - 0.5) * config.speed;
+        particle._vy = (Math.random() - 0.5) * config.speed;
+        particle._opacity = Math.random() * 0.4 + 0.2;
+        particle._opacityDirection = Math.random() > 0.5 ? 1 : -1;
+        
+        particles.push(particle);
+        particleSystem.appendChild(particle);
     }
     
-    .poem-section {
-        transition: opacity 0.6s ease, transform 0.6s ease;
+    // Store particles reference for cleanup
+    particleSystem._particles = particles;
+    particleSystem._animationId = null;
+    
+    // Animate particles with requestAnimationFrame (more performant)
+    let lastTime = 0;
+    const animateParticles = (currentTime) => {
+        if (currentTime - lastTime < 50) { // Limit to ~20fps for performance
+            particleSystem._animationId = requestAnimationFrame(animateParticles);
+            return;
+        }
+        lastTime = currentTime;
+        
+        particles.forEach(particle => {
+            particle._x += particle._vx * 0.1;
+            particle._y += particle._vy * 0.1;
+            particle._opacity += particle._opacityDirection * 0.01;
+            
+            // Bounce off edges
+            if (particle._x <= 0 || particle._x >= 100) particle._vx *= -1;
+            if (particle._y <= 0 || particle._y >= 100) particle._vy *= -1;
+            
+            // Reverse opacity direction
+            if (particle._opacity <= 0.1 || particle._opacity >= 0.5) {
+                particle._opacityDirection *= -1;
+            }
+            
+            // Keep within bounds
+            particle._x = Math.max(0, Math.min(100, particle._x));
+            particle._y = Math.max(0, Math.min(100, particle._y));
+            particle._opacity = Math.max(0.1, Math.min(0.5, particle._opacity));
+            
+            // Apply styles
+            particle.style.left = particle._x + '%';
+            particle.style.top = particle._y + '%';
+            particle.style.opacity = particle._opacity;
+        });
+        
+        particleSystem._animationId = requestAnimationFrame(animateParticles);
+    };
+    
+    // Start animation
+    particleSystem._animationId = requestAnimationFrame(animateParticles);
+}
+
+// Function to cleanup particle system
+function cleanupParticleSystem() {
+    const particleSystem = document.getElementById('particle-system');
+    if (particleSystem && particleSystem._animationId) {
+        cancelAnimationFrame(particleSystem._animationId);
+        particleSystem._animationId = null;
     }
-`;
-document.head.appendChild(style);
+}
+
+// Global cleanup function to prevent memory leaks
+function cleanup() {
+    // Cleanup particle system
+    cleanupParticleSystem();
+    
+    // Cleanup audio
+    const audio = document.getElementById('mode-audio');
+    if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+        audio.remove();
+    }
+    
+    // Cleanup event listeners
+    const regenerateBtn = document.getElementById('regenerate-btn');
+    if (regenerateBtn && regenerateBtn._clickHandler) {
+        regenerateBtn.removeEventListener('click', regenerateBtn._clickHandler);
+        regenerateBtn._clickHandler = null;
+    }
+    
+    const audioToggle = document.querySelector('.audio-toggle');
+    if (audioToggle && audioToggle._clickHandler) {
+        audioToggle.removeEventListener('click', audioToggle._clickHandler);
+        audioToggle._clickHandler = null;
+    }
+}
+
+// Performance monitoring (development only)
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    let performanceTimer;
+    function logPerformance(operation) {
+        if (performanceTimer) {
+            console.log(`Performance: ${operation} took ${Date.now() - performanceTimer}ms`);
+        }
+        performanceTimer = Date.now();
+    }
+    
+    // Monitor performance of key operations
+    const originalGeneratePoem = generatePoem;
+    generatePoem = async function() {
+        logPerformance('generatePoem start');
+        const result = await originalGeneratePoem.call(this);
+        logPerformance('generatePoem end');
+        return result;
+    };
+}
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', cleanup);
+
+// Function to load and display a random Australian slogan
+async function loadAussieSlogan() {
+    try {
+        const response = await fetch('aussie-slogans.json');
+        const slogans = await response.json();
+        
+        // Get all items and their slogans
+        const items = Object.keys(slogans);
+        const randomItem = items[Math.floor(Math.random() * items.length)];
+        const itemSlogans = slogans[randomItem];
+        const randomSlogan = itemSlogans[Math.floor(Math.random() * itemSlogans.length)];
+        
+        // Update the slogan display
+        const sloganElement = document.querySelector('.slogan-text');
+        if (sloganElement) {
+            sloganElement.textContent = randomSlogan;
+        }
+        
+        return { item: randomItem, slogan: randomSlogan };
+    } catch (error) {
+        console.error('Failed to load Australian slogan:', error);
+        // Fallback slogan
+        const sloganElement = document.querySelector('.slogan-text');
+        if (sloganElement) {
+            sloganElement.textContent = "It's not a website, it's digital poetry with extreme Australian energy.";
+        }
+        return null;
+    }
+}
+
+// Function to update the Australian slogan (called when regenerating)
+async function updateAussieSlogan() {
+    const sloganData = await loadAussieSlogan();
+    if (sloganData) {
+        console.log(`Loaded slogan for ${sloganData.item}: ${sloganData.slogan}`);
+    }
+}
+
+// Add click handler to the slogan for regeneration
+function setupSloganClickHandler() {
+    const sloganElement = document.getElementById('aussie-slogan');
+    if (sloganElement) {
+        sloganElement.style.cursor = 'pointer';
+        sloganElement.title = 'Click for a new Aussie slogan!';
+        
+        const clickHandler = async () => {
+            const sloganText = sloganElement.querySelector('.slogan-text');
+            if (sloganText) {
+                sloganText.textContent = 'Getting new wisdom...';
+                sloganElement.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    sloganElement.style.transform = '';
+                }, 150);
+                
+                await updateAussieSlogan();
+            }
+        };
+        
+        sloganElement.addEventListener('click', clickHandler);
+        sloganElement._clickHandler = clickHandler;
+    }
+}
+

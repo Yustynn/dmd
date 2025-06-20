@@ -5,6 +5,56 @@
     box-sizing: border-box;
 }
 
+/* PERFORMANCE OPTIMIZATIONS */
+* {
+    /* Enable hardware acceleration for better performance */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+/* Reduce motion for users who prefer it */
+/* Performance optimizations for slower devices */
+.reduced-motion * {
+    animation-duration: 0.1s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.1s !important;
+}
+
+.reduced-motion body::before,
+.reduced-motion body::after {
+    display: none !important;
+}
+
+.reduced-motion #particle-system {
+    display: none !important;
+}
+
+/* Existing media query for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Optimize animations */
+@media (max-width: 768px) {
+    /* Disable complex animations on mobile */
+    body.metal-mode::after,
+    body.girly-mode::after,
+    body.space-mode::after,
+    body.retro-mode::after {
+        display: none;
+    }
+    
+    /* Reduce particle count on mobile */
+    .particle-system {
+        display: none;
+    }
+}
+
 body {
     font-family: 'Georgia', serif;
     line-height: 1.6;
@@ -12,6 +62,180 @@ body {
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     min-height: 100vh;
     transition: all 0.8s ease;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* EXTREME THEMED BACKGROUNDS */
+
+/* Metal Mode - Skulls and Fire */
+body.metal-mode {
+    background: 
+        radial-gradient(circle at 20% 50%, rgba(255, 0, 0, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 30%, rgba(255, 69, 0, 0.2) 0%, transparent 50%),
+        linear-gradient(135deg, #0a0a0a 0%, #1a0000 50%, #000000 100%);
+    animation: hellfire 3s ease-in-out infinite alternate;
+}
+
+body.metal-mode::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ff0000' fill-opacity='0.08'%3E%3Cpath d='M30 30c0-11.046-8.954-20-20-20s-20 8.954-20 20 8.954 20 20 20 20-8.954 20-20zm10 0c0-11.046-8.954-20-20-20s-20 8.954-20 20 8.954 20 20 20 20-8.954 20-20z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.5;
+    will-change: transform;
+    pointer-events: none;
+    z-index: -1;
+}
+
+body.metal-mode::after {
+    content: '💀 ⚡ 🔥 💀 ⚡ 🔥 💀 ⚡ 🔥 💀 ⚡ 🔥 💀 ⚡ 🔥 💀 ⚡ 🔥 💀 ⚡ 🔥 💀 ⚡ 🔥';
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 200%;
+    height: 100vh;
+    font-size: 3rem;
+    line-height: 10rem;
+    opacity: 0.08;
+    will-change: transform;
+    animation: metalScroll 20s linear infinite;
+    pointer-events: none;
+    z-index: -1;
+    white-space: nowrap;
+}
+
+/* Girly Mode - Hearts and Rainbows */
+body.girly-mode {
+    background: 
+        radial-gradient(circle at 25% 25%, rgba(255, 192, 203, 0.8) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(255, 182, 193, 0.8) 0%, transparent 50%),
+        linear-gradient(45deg, #ffb6c1 0%, #ffc0cb 25%, #ff69b4 50%, #dda0dd 75%, #ff1493 100%);
+    animation: rainbowPulse 4s ease-in-out infinite;
+}
+
+body.girly-mode::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 20% 30%, rgba(255, 20, 147, 0.2) 2px, transparent 2px),
+        radial-gradient(circle at 80% 70%, rgba(255, 105, 180, 0.2) 2px, transparent 2px);
+    background-size: 80px 80px, 120px 120px;
+    will-change: transform;
+    pointer-events: none;
+    z-index: -1;
+}
+
+body.girly-mode::after {
+    content: '💖 🌈 ✨ 💕 🦄 💖 🌈 ✨ 💕 🦄 💖 🌈 ✨ 💕 🦄 💖 🌈 ✨ 💕 🦄 💖 🌈 ✨ 💕 🦄';
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 200%;
+    height: 100vh;
+    font-size: 3rem;
+    line-height: 6rem;
+    opacity: 0.2;
+    animation: heartFloat 12s linear infinite;
+    pointer-events: none;
+    z-index: -1;
+    white-space: nowrap;
+}
+
+/* Space Mode - Moving Stars */
+body.space-mode {
+    background: 
+        radial-gradient(ellipse at center, #0f3460 0%, #16537e 50%, #533483 100%);
+    overflow: hidden;
+}
+
+body.space-mode::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 25% 25%, #ffffff 1px, transparent 1px),
+        radial-gradient(circle at 75% 75%, #ffffff 0.5px, transparent 0.5px);
+    background-size: 120px 120px, 180px 180px;
+    will-change: transform;
+    animation: starField 30s linear infinite;
+    pointer-events: none;
+    z-index: -1;
+}
+
+body.space-mode::after {
+    content: '🌟 🚀 🌌 ⭐ 🛸 🌟 🚀 🌌 ⭐ 🛸 🌟 🚀 🌌 ⭐ 🛸 🌟 🚀 🌌 ⭐ 🛸';
+    position: fixed;
+    top: -50px;
+    left: -100%;
+    width: 200%;
+    height: calc(100vh + 100px);
+    font-size: 2rem;
+    line-height: 4rem;
+    opacity: 0.3;
+    animation: cosmicDrift 25s linear infinite;
+    pointer-events: none;
+    z-index: -1;
+    white-space: nowrap;
+    transform: rotate(-15deg);
+}
+
+/* Retro Mode - Neon Grid */
+body.retro-mode {
+    background: 
+        linear-gradient(90deg, transparent 79px, rgba(255, 107, 53, 0.1) 79px, rgba(255, 107, 53, 0.1) 81px, transparent 81px),
+        linear-gradient(rgba(255, 107, 53, 0.1) 79px, transparent 79px, transparent 81px, rgba(255, 107, 53, 0.1) 81px),
+        linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #ffdc00 100%);
+    background-size: 80px 80px, 80px 80px, 100% 100%;
+    animation: neonPulse 2s ease-in-out infinite alternate;
+}
+
+body.retro-mode::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(255, 220, 0, 0.1) 2px,
+            rgba(255, 220, 0, 0.1) 4px
+        );
+    animation: scanlines 0.1s linear infinite;
+    pointer-events: none;
+    z-index: -1;
+}
+
+body.retro-mode::after {
+    content: '🕹️ 📼 💾 🎮 📺 🕹️ 📼 💾 🎮 📺 🕹️ 📼 💾 🎮 📺 🕹️ 📼 💾 🎮 📺';
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 200%;
+    height: 100vh;
+    font-size: 3rem;
+    line-height: 8rem;
+    opacity: 0.15;
+    animation: retroGlitch 10s linear infinite;
+    pointer-events: none;
+    z-index: -1;
+    white-space: nowrap;
+    filter: hue-rotate(45deg);
 }
 
 .container {
@@ -147,56 +371,287 @@ footer {
     font-size: 0.9rem;
 }
 
-/* Mode-specific animations and effects */
-.mode-transition {
-    animation: modeChange 0.8s ease-in-out;
+/* OPTIMIZED ANIMATIONS */
+
+@keyframes hellfire {
+    0% { filter: hue-rotate(0deg) brightness(1); }
+    100% { filter: hue-rotate(15deg) brightness(1.1); }
 }
 
-@keyframes modeChange {
-    0% { opacity: 1; }
-    50% { opacity: 0.3; transform: scale(0.95); }
-    100% { opacity: 1; transform: scale(1); }
+@keyframes metalScroll {
+    0% { transform: translate3d(0%, 0, 0); }
+    100% { transform: translate3d(50%, 0, 0); }
 }
 
-/* Metal mode specific effects */
-.metal-glow {
-    text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 30px #ff0000;
+@keyframes rainbowPulse {
+    0% { filter: hue-rotate(0deg) saturate(1); }
+    50% { filter: hue-rotate(180deg) saturate(1.3); }
+    100% { filter: hue-rotate(360deg) saturate(1); }
 }
 
-/* Girly mode specific effects */
-.girly-sparkle {
-    position: relative;
+@keyframes heartFloat {
+    0% { transform: translate3d(0%, 0, 0) rotate(0deg); }
+    100% { transform: translate3d(50%, 0, 0) rotate(5deg); }
 }
 
-.girly-sparkle::before {
-    content: '✨';
-    position: absolute;
-    animation: sparkle 2s infinite;
+@keyframes starField {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(-50px, -50px, 0); }
 }
 
-@keyframes sparkle {
-    0%, 100% { opacity: 0; transform: scale(0.5); }
-    50% { opacity: 1; transform: scale(1); }
+@keyframes cosmicDrift {
+    0% { transform: translate3d(0%, 0, 0) rotate(-15deg); }
+    100% { transform: translate3d(50%, 0, 0) rotate(-15deg); }
 }
 
-/* Retro mode specific effects */
-.retro-pulse {
-    animation: retro-glow 1.5s ease-in-out infinite alternate;
+@keyframes neonPulse {
+    0% { filter: brightness(1) contrast(1); }
+    100% { filter: brightness(1.2) contrast(1.1); }
 }
 
-@keyframes retro-glow {
-    from { text-shadow: 0 0 5px #ff6b35, 0 0 10px #ff6b35; }
-    to { text-shadow: 0 0 10px #ffdc00, 0 0 20px #ffdc00; }
+@keyframes scanlines {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(0, 4px, 0); }
 }
 
-/* Space mode specific effects */
-.space-float {
-    animation: float 3s ease-in-out infinite;
+@keyframes retroGlitch {
+    0% { transform: translate3d(0%, 0, 0) skew(0deg); }
+    25% { transform: translate3d(1%, 0, 0) skew(0.5deg); }
+    50% { transform: translate3d(25%, 0, 0) skew(0deg); }
+    75% { transform: translate3d(26%, 0, 0) skew(-0.5deg); }
+    100% { transform: translate3d(50%, 0, 0) skew(0deg); }
 }
 
-@keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
+/* OPTIMIZED KEYFRAME ANIMATIONS */
+
+@keyframes metalGlow {
+    0% { 
+        text-shadow: 0 0 10px #ff0000;
+        transform: skew(-2deg) scale(1);
+    }
+    100% { 
+        text-shadow: 0 0 20px #ff0000;
+        transform: skew(-2deg) scale(1.02);
+    }
+}
+
+@keyframes flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+@keyframes sparkleGlow {
+    0% { 
+        text-shadow: 0 0 15px #ff69b4;
+        transform: rotate(-1deg) scale(1);
+    }
+    100% { 
+        text-shadow: 0 0 25px #ff69b4;
+        transform: rotate(-1deg) scale(1.01);
+    }
+}
+
+@keyframes cuteWiggle {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(0.5deg); }
+    100% { transform: rotate(0deg); }
+}
+
+@keyframes heartbeat {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.01); }
+    100% { transform: scale(1); }
+}
+
+@keyframes cosmicGlow {
+    0% { 
+        text-shadow: 0 0 15px #00ffff;
+        transform: scale(1);
+    }
+    100% { 
+        text-shadow: 0 0 25px #00ffff;
+        transform: scale(1.01);
+    }
+}
+
+@keyframes alienPulse {
+    0% { 
+        color: #80ff80;
+        text-shadow: 0 0 8px #80ff80;
+    }
+    100% { 
+        color: #60ff60;
+        text-shadow: 0 0 12px #60ff60;
+    }
+}
+
+@keyframes spaceship {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-3px); }
+    100% { transform: translateY(0px); }
+}
+
+@keyframes retroGlow {
+    0% { 
+        filter: brightness(1);
+        transform: perspective(300px) rotateX(10deg);
+    }
+    100% { 
+        filter: brightness(1.1);
+        transform: perspective(300px) rotateX(10deg);
+    }
+}
+
+@keyframes vhsGlitch {
+    0% { transform: translateX(0px); }
+    25% { transform: translateX(1px); }
+    50% { transform: translateX(0px); }
+    75% { transform: translateX(-1px); }
+    100% { transform: translateX(0px); }
+}
+
+/* OPTIMIZED MODE EFFECTS */
+
+/* Metal Mode Header Effects */
+.metal-mode header h1 {
+    color: #ff4444; /* Slightly brighter red for better contrast */
+    text-shadow: 
+        0 0 5px #ff0000,
+        0 0 10px #ff0000; /* Reduced glow intensity */
+    animation: metalGlow 3s ease-in-out infinite alternate;
+    font-family: 'Cinzel', serif;
+    font-weight: 900;
+    transform: skew(-2deg);
+    will-change: transform;
+}
+
+.metal-mode .subtitle {
+    color: #ff7744; /* Brighter orange for better contrast */
+    text-shadow: 0 0 3px #ff6600; /* Reduced text-shadow */
+    animation: flicker 3s infinite;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600; /* Added font weight for better readability */
+}
+
+.metal-mode main {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #ff0000;
+    box-shadow: 0 0 15px #ff0000;
+    will-change: transform;
+}
+
+.metal-mode .stanza {
+    background: rgba(26, 26, 26, 0.95); /* Increased opacity for better contrast */
+    border: 2px solid #ff3300;
+    border-left: 4px solid #ff0000;
+    color: #ffffff;
+    text-shadow: 0 0 1px #ff0000; /* Reduced text-shadow for better readability */
+    font-weight: 500; /* Added font weight for better readability */
+}
+
+/* Girly Mode Header Effects */
+.girly-mode header h1 {
+    color: #ff1493;
+    text-shadow: 0 0 15px #ff69b4;
+    animation: sparkleGlow 3s ease-in-out infinite;
+    font-family: 'Dancing Script', cursive;
+    font-weight: 700;
+    transform: rotate(-1deg);
+    will-change: transform;
+}
+
+.girly-mode .subtitle {
+    color: #ff69b4;
+    text-shadow: 0 0 5px #ff69b4;
+    animation: cuteWiggle 4s ease-in-out infinite;
+    font-style: italic;
+}
+
+.girly-mode main {
+    background: rgba(255, 182, 193, 0.9);
+    border: 3px solid #ff69b4;
+    border-radius: 20px;
+    box-shadow: 0 0 20px #ff69b4;
+    animation: heartbeat 3s ease-in-out infinite;
+}
+
+.girly-mode .stanza {
+    background: rgba(255, 240, 245, 0.95);
+    border: 2px solid #ff69b4;
+    border-left: 6px solid #ff1493;
+    color: #8b008b;
+    border-radius: 15px;
+}
+
+/* Space Mode Header Effects */
+.space-mode header h1 {
+    color: #00ffff;
+    text-shadow: 0 0 15px #00ffff;
+    animation: cosmicGlow 4s ease-in-out infinite;
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    letter-spacing: 3px;
+    will-change: transform;
+}
+
+.space-mode .subtitle {
+    color: #80ff80;
+    text-shadow: 0 0 8px #80ff80;
+    animation: alienPulse 3s ease-in-out infinite;
+    font-family: 'Exo 2', sans-serif;
+    text-transform: uppercase;
+}
+
+.space-mode main {
+    background: rgba(15, 52, 96, 0.9);
+    border: 2px solid #00ffff;
+    box-shadow: 0 0 25px #00ffff;
+    animation: spaceship 5s ease-in-out infinite;
+}
+
+.space-mode .stanza {
+    background: rgba(21, 83, 126, 0.8);
+    border: 2px solid #00ffff;
+    border-left: 4px solid #0080ff;
+    color: #ffffff;
+    text-shadow: 0 0 3px #00ffff;
+}
+
+/* Retro Mode Header Effects */
+.retro-mode header h1 {
+    color: #ffdc00;
+    text-shadow: 
+        2px 2px 0px #ff6b35,
+        0 0 15px #ffdc00;
+    animation: retroGlow 2s ease-in-out infinite alternate;
+    font-family: 'Righteous', cursive;
+    font-weight: 900;
+    transform: perspective(300px) rotateX(10deg);
+    will-change: transform;
+}
+
+.retro-mode .subtitle {
+    color: #ff6b35;
+    text-shadow: 1px 1px 0px #f7931e;
+    animation: vhsGlitch 3s linear infinite;
+    font-family: 'Orbitron', monospace;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.retro-mode main {
+    background: rgba(255, 107, 53, 0.1);
+    border: 2px solid #ffdc00;
+    box-shadow: 0 0 20px #ffdc00;
+}
+
+.retro-mode .stanza {
+    background: rgba(247, 147, 30, 0.2);
+    border: 2px solid #ffdc00;
+    border-left: 6px solid #ff6b35;
+    color: #2c1810;
+    text-shadow: 1px 1px 0px #ffdc00;
 }
 
 /* Audio control styles */
@@ -223,7 +678,385 @@ footer {
     transform: scale(1.1);
 }
 
-/* Responsive design */
+/* OPTIMIZED AUDIO CONTROL THEMING */
+.metal-mode .audio-toggle {
+    background: radial-gradient(circle, #ff0000 0%, #660000 100%);
+    color: #ffffff;
+    border: 2px solid #ff0000;
+    box-shadow: 0 0 10px #ff0000;
+    animation: metalAudioPulse 3s ease-in-out infinite;
+}
+
+.metal-mode .audio-toggle:hover {
+    background: radial-gradient(circle, #ff3300 0%, #990000 100%);
+    transform: scale(1.1);
+    box-shadow: 0 0 15px #ff0000;
+}
+
+.girly-mode .audio-toggle {
+    background: radial-gradient(circle, #ff69b4 0%, #ff1493 100%);
+    color: #ffffff;
+    border: 2px solid #ff69b4;
+    box-shadow: 0 0 10px #ff69b4;
+    animation: girlyAudioBounce 2s ease-in-out infinite;
+}
+
+.girly-mode .audio-toggle:hover {
+    background: radial-gradient(circle, #ff1493 0%, #ff69b4 100%);
+    transform: scale(1.2);
+}
+
+.space-mode .audio-toggle {
+    background: radial-gradient(circle, #00ffff 0%, #0080ff 100%);
+    color: #ffffff;
+    border: 2px solid #00ffff;
+    box-shadow: 0 0 15px #00ffff;
+    animation: spaceAudioOrbit 4s linear infinite;
+}
+
+.space-mode .audio-toggle:hover {
+    background: radial-gradient(circle, #0080ff 0%, #00ffff 100%);
+    transform: scale(1.3);
+}
+
+.retro-mode .audio-toggle {
+    background: linear-gradient(45deg, #ffdc00 0%, #ff6b35 50%, #f7931e 100%);
+    color: #2c1810;
+    border: 2px solid #ffdc00;
+    box-shadow: 0 0 10px #ffdc00;
+    animation: retroAudioGlitch 2.5s linear infinite;
+}
+
+.retro-mode .audio-toggle:hover {
+    background: linear-gradient(45deg, #ff6b35 0%, #ffdc00 50%, #f7931e 100%);
+    transform: scale(1.1);
+}
+
+@keyframes metalAudioPulse {
+    0% { box-shadow: 0 0 10px #ff0000; }
+    50% { box-shadow: 0 0 20px #ff0000; }
+    100% { box-shadow: 0 0 10px #ff0000; }
+}
+
+@keyframes girlyAudioBounce {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes spaceAudioOrbit {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes retroAudioGlitch {
+    0% { filter: hue-rotate(0deg); }
+    25% { filter: hue-rotate(90deg); }
+    50% { filter: hue-rotate(180deg); }
+    75% { filter: hue-rotate(270deg); }
+    100% { filter: hue-rotate(360deg); }
+}
+
+/* EXTREME NEW ELEMENTS STYLING */
+
+.mode-indicator {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 25px;
+    font-weight: bold;
+    z-index: 1001;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    backdrop-filter: blur(10px);
+    border: 2px solid;
+    animation: indicatorPulse 2s ease-in-out infinite;
+}
+
+.regenerate-controls {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 1000;
+}
+
+.regenerate-btn {
+    background: linear-gradient(45deg, #ff6b35, #f7931e);
+    color: #ffffff;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 25px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+.regenerate-btn:hover {
+    transform: scale(1.1) rotate(2deg);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+}
+
+/* EXTREME CURSOR EFFECTS */
+.metal-mode {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ctext y='20' font-size='20'%3E💀%3C/text%3E%3C/svg%3E"), auto;
+}
+
+.girly-mode {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ctext y='20' font-size='20'%3E💖%3C/text%3E%3C/svg%3E"), auto;
+}
+
+.space-mode {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ctext y='20' font-size='20'%3E🚀%3C/text%3E%3C/svg%3E"), auto;
+}
+
+.retro-mode {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ctext y='20' font-size='20'%3E🕹️%3C/text%3E%3C/svg%3E"), auto;
+}
+
+/* EXTREME MODE SPECIFIC STYLING FOR NEW ELEMENTS */
+.metal-mode .mode-indicator {
+    background: radial-gradient(circle, #ff0000 0%, #660000 100%);
+    color: #ffffff;
+    border-color: #ff0000;
+    text-shadow: 0 0 10px #ff0000;
+}
+
+.metal-mode .regenerate-btn {
+    background: linear-gradient(45deg, #ff0000, #990000);
+    box-shadow: 
+        0 6px 20px rgba(255, 0, 0, 0.4),
+        0 0 30px #ff0000;
+    animation: metalButtonPulse 2s ease-in-out infinite;
+}
+
+.girly-mode .mode-indicator {
+    background: radial-gradient(circle, #ff69b4 0%, #ff1493 100%);
+    color: #ffffff;
+    border-color: #ff69b4;
+    text-shadow: 0 0 10px #ff69b4;
+}
+
+.girly-mode .regenerate-btn {
+    background: linear-gradient(45deg, #ff69b4, #ff1493);
+    box-shadow: 
+        0 6px 20px rgba(255, 105, 180, 0.4),
+        0 0 30px #ff69b4;
+    animation: girlyButtonBounce 1.5s ease-in-out infinite;
+}
+
+.space-mode .mode-indicator {
+    background: radial-gradient(circle, #00ffff 0%, #0080ff 100%);
+    color: #ffffff;
+    border-color: #00ffff;
+    text-shadow: 0 0 10px #00ffff;
+}
+
+.space-mode .regenerate-btn {
+    background: linear-gradient(45deg, #00ffff, #0080ff);
+    box-shadow: 
+        0 6px 20px rgba(0, 255, 255, 0.4),
+        0 0 30px #00ffff;
+    animation: spaceButtonFloat 3s ease-in-out infinite;
+}
+
+.retro-mode .mode-indicator {
+    background: linear-gradient(45deg, #ffdc00, #ff6b35);
+    color: #2c1810;
+    border-color: #ffdc00;
+    text-shadow: 1px 1px 0px #ff6b35;
+}
+
+.retro-mode .regenerate-btn {
+    background: linear-gradient(45deg, #ffdc00, #ff6b35);
+    color: #2c1810;
+    box-shadow: 
+        0 6px 20px rgba(255, 220, 0, 0.4),
+        0 0 30px #ffdc00;
+    animation: retroButtonGlitch 1.8s linear infinite;
+}
+
+/* OPTIMIZED BUTTON ANIMATIONS */
+@keyframes indicatorPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+@keyframes metalButtonPulse {
+    0% { box-shadow: 0 6px 20px rgba(255, 0, 0, 0.4); }
+    50% { box-shadow: 0 8px 25px rgba(255, 0, 0, 0.6); }
+    100% { box-shadow: 0 6px 20px rgba(255, 0, 0, 0.4); }
+}
+
+@keyframes girlyButtonBounce {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+    100% { transform: scale(1); }
+}
+
+@keyframes spaceButtonFloat {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-3px); }
+    100% { transform: translateY(0px); }
+}
+
+@keyframes retroButtonGlitch {
+    0% { filter: hue-rotate(0deg); }
+    25% { filter: hue-rotate(90deg); }
+    50% { filter: hue-rotate(180deg); }
+    75% { filter: hue-rotate(270deg); }
+    100% { filter: hue-rotate(360deg); }
+}
+
+/* PARTICLE SYSTEM */
+.particle-system {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -2;
+}
+
+/* OPTIMIZED PARTICLE ANIMATIONS */
+@keyframes particleFloatmetal {
+    0% { 
+        transform: translateY(0px) scale(1);
+        opacity: 0.3;
+    }
+    100% { 
+        transform: translateY(-30px) scale(0.8);
+        opacity: 0.1;
+    }
+}
+
+@keyframes particleFloatgirly {
+    0% { 
+        transform: translateY(0px) scale(1);
+        opacity: 0.4;
+    }
+    100% { 
+        transform: translateY(-30px) scale(0.9);
+        opacity: 0.2;
+    }
+}
+
+@keyframes particleFloatspace {
+    0% { 
+        transform: translate(0px, 0px) scale(1);
+        opacity: 0.4;
+    }
+    100% { 
+        transform: translate(-10px, -40px) scale(0.7);
+        opacity: 0.1;
+    }
+}
+
+@keyframes particleFloatretro {
+    0% { 
+        transform: translateY(0px) scale(1);
+        opacity: 0.4;
+        filter: hue-rotate(0deg);
+    }
+    100% { 
+        transform: translateY(-30px) scale(0.8);
+        opacity: 0.2;
+        filter: hue-rotate(180deg);
+    }
+}
+
+/* EXTREME SCROLLBAR STYLING */
+.metal-mode ::-webkit-scrollbar {
+    width: 12px;
+}
+
+.metal-mode ::-webkit-scrollbar-track {
+    background: #1a1a1a;
+    border-radius: 6px;
+}
+
+.metal-mode ::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #ff0000, #990000);
+    border-radius: 6px;
+    box-shadow: 0 0 10px #ff0000;
+}
+
+.girly-mode ::-webkit-scrollbar {
+    width: 12px;
+}
+
+.girly-mode ::-webkit-scrollbar-track {
+    background: #ffb6c1;
+    border-radius: 6px;
+}
+
+.girly-mode ::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #ff69b4, #ff1493);
+    border-radius: 6px;
+    box-shadow: 0 0 10px #ff69b4;
+}
+
+.space-mode ::-webkit-scrollbar {
+    width: 12px;
+}
+
+.space-mode ::-webkit-scrollbar-track {
+    background: #0f3460;
+    border-radius: 6px;
+}
+
+.space-mode ::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #00ffff, #0080ff);
+    border-radius: 6px;
+    box-shadow: 0 0 10px #00ffff;
+}
+
+.retro-mode ::-webkit-scrollbar {
+    width: 12px;
+}
+
+.retro-mode ::-webkit-scrollbar-track {
+    background: #ff6b35;
+    border-radius: 6px;
+}
+
+.retro-mode ::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #ffdc00, #f7931e);
+    border-radius: 6px;
+    box-shadow: 0 0 10px #ffdc00;
+}
+
+/* EXTREME SELECTION STYLING */
+.metal-mode ::selection {
+    background: rgba(255, 0, 0, 0.7);
+    color: #ffffff;
+    text-shadow: 0 0 10px #ff0000;
+}
+
+.girly-mode ::selection {
+    background: rgba(255, 105, 180, 0.7);
+    color: #ffffff;
+    text-shadow: 0 0 10px #ff69b4;
+}
+
+.space-mode ::selection {
+    background: rgba(0, 255, 255, 0.7);
+    color: #000000;
+    text-shadow: 0 0 10px #00ffff;
+}
+
+.retro-mode ::selection {
+    background: rgba(255, 220, 0, 0.7);
+    color: #2c1810;
+    text-shadow: 0 0 10px #ffdc00;
+}
+
+/* EXTREME RESPONSIVE UPDATES */
 @media (max-width: 768px) {
     .container {
         padding: 15px;
@@ -247,6 +1080,7 @@ footer {
     
     .stanza p {
         font-size: 1rem;
+        margin: 0 10px;
     }
 }
 
@@ -266,4 +1100,192 @@ footer {
     .stanza p {
         font-size: 0.9rem;
     }
+}
+
+/* OPTIMIZED IMAGE EFFECTS */
+.metal-mode .poem-image {
+    filter: sepia(50%) hue-rotate(320deg) saturate(1.5) brightness(0.9) contrast(1.3);
+    border: 2px solid #ff0000;
+    box-shadow: 0 0 15px #ff0000;
+}
+
+.girly-mode .poem-image {
+    filter: saturate(1.3) brightness(1.1) contrast(1.05) hue-rotate(10deg);
+    border: 3px solid #ff69b4;
+    border-radius: 20px;
+    box-shadow: 0 0 20px #ff69b4;
+}
+
+.space-mode .poem-image {
+    filter: hue-rotate(200deg) saturate(1.2) brightness(0.9) contrast(1.2);
+    border: 2px solid #00ffff;
+    box-shadow: 0 0 25px #00ffff;
+}
+
+.retro-mode .poem-image {
+    filter: sepia(30%) saturate(1.3) brightness(1.05) contrast(1.1) hue-rotate(20deg);
+    border: 2px solid #ffdc00;
+    box-shadow: 0 0 20px #ffdc00;
+}
+
+@keyframes metalImageGlow {
+    0% { box-shadow: 0 0 15px #ff0000; }
+    50% { box-shadow: 0 0 25px #ff0000; }
+    100% { box-shadow: 0 0 15px #ff0000; }
+}
+
+@keyframes cuteImageFloat {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-2px); }
+    100% { transform: translateY(0px); }
+}
+
+@keyframes spaceImageGlow {
+    0% { box-shadow: 0 0 25px #00ffff; }
+    50% { box-shadow: 0 0 35px #00ffff; }
+    100% { box-shadow: 0 0 25px #00ffff; }
+}
+
+@keyframes retroImageGlitch {
+    0% { transform: translateX(0px); }
+    25% { transform: translateX(0.5px); }
+    50% { transform: translateX(0px); }
+    75% { transform: translateX(-0.5px); }
+    100% { transform: translateX(0px); }
+}
+
+/* AUDIO CONTROLS WITH EXTREME STYLING */
+.audio-controls {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+/* AUSSIE SLOGAN STYLING */
+.aussie-slogan {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: rgba(255, 193, 7, 0.1);
+    border: 2px solid #ffc107;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.aussie-slogan:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(255, 193, 7, 0.3);
+    background: rgba(255, 193, 7, 0.15);
+}
+
+.aussie-slogan::before {
+    content: '🇦🇺';
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    font-size: 1.5rem;
+    opacity: 0.7;
+}
+
+.aussie-slogan::after {
+    content: '🇦🇺';
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 1.5rem;
+    opacity: 0.7;
+}
+
+.slogan-text {
+    font-size: 1.1rem;
+    font-style: italic;
+    color: #b8860b;
+    font-weight: 600;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    line-height: 1.4;
+    margin: 0 40px;
+}
+
+/* Mode-specific slogan styling */
+.metal-mode .aussie-slogan {
+    background: rgba(255, 0, 0, 0.15);
+    border-color: #ff3300;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+}
+
+.metal-mode .slogan-text {
+    color: #ff6600;
+    text-shadow: 0 0 3px #ff0000;
+    font-weight: 700;
+}
+
+.girly-mode .aussie-slogan {
+    background: rgba(255, 105, 180, 0.15);
+    border-color: #ff69b4;
+    box-shadow: 0 0 15px rgba(255, 105, 180, 0.3);
+}
+
+.girly-mode .slogan-text {
+    color: #ff1493;
+    text-shadow: 0 0 3px #ff69b4;
+}
+
+.space-mode .aussie-slogan {
+    background: rgba(0, 255, 255, 0.15);
+    border-color: #00ffff;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+}
+
+.space-mode .slogan-text {
+    color: #00ffff;
+    text-shadow: 0 0 3px #00ffff;
+}
+
+.retro-mode .aussie-slogan {
+    background: rgba(255, 220, 0, 0.15);
+    border-color: #ffdc00;
+    box-shadow: 0 0 15px rgba(255, 220, 0, 0.3);
+}
+
+.retro-mode .slogan-text {
+    color: #ff6b35;
+    text-shadow: 1px 1px 0px #ffdc00;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .aussie-slogan {
+        margin: 0 -10px 20px -10px;
+        padding: 15px;
+    }
+    
+    .slogan-text {
+        font-size: 1rem;
+        margin: 0 30px;
+    }
+}
+
+.metal-mode .aussie-slogan:hover {
+    box-shadow: 0 5px 20px rgba(255, 0, 0, 0.4);
+    background: rgba(255, 0, 0, 0.2);
+}
+
+.girly-mode .aussie-slogan:hover {
+    box-shadow: 0 5px 20px rgba(255, 105, 180, 0.4);
+    background: rgba(255, 105, 180, 0.2);
+}
+
+.space-mode .aussie-slogan:hover {
+    box-shadow: 0 5px 20px rgba(0, 255, 255, 0.4);
+    background: rgba(0, 255, 255, 0.2);
+}
+
+.retro-mode .aussie-slogan:hover {
+    box-shadow: 0 5px 20px rgba(255, 220, 0, 0.4);
+    background: rgba(255, 220, 0, 0.2);
 }
