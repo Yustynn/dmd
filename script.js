@@ -362,23 +362,259 @@ function selectRandomMode() {
     return currentMode;
 }
 
-// Function to apply mode styling - OPTIMIZED
+// Function to apply mode styling - CORNY & ANIMATED WITH TILED BACKGROUNDS
 function applyModeStyles(mode) {
     const modeConfig = modes[mode];
     if (!modeConfig) return;
     
-    // Apply mode class to body for theming (CSS handles the rest)
+    // Remove all mode classes
     document.body.className = '';
-    document.body.classList.add(`${mode}-mode`);
-    
-    // Remove expensive dynamic CSS injection - let CSS handle styling
-    // Just update the mode indicator text
+    document.body.classList.add(`${mode}-mode`, 'corny-theme');
+
+    // Remove existing corny style if present
+    const oldCorny = document.getElementById('corny-theme-style');
+    if (oldCorny) oldCorny.remove();
+
+    // Corny tiled SVG backgrounds for each mode (HTML entities, y=36 for vertical centering)
+    const cornyTiles = {
+        metal: `url('data:image/svg+xml;utf8,<svg width="48" height="48" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" fill="%231a1a1a"/><text x="24" y="36" font-size="32" text-anchor="middle" fill="%23ff0000" font-family="Arial">&#9889;</text></svg>')`, // lightning bolt
+        girly: `url('data:image/svg+xml;utf8,<svg width="48" height="48" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" fill="%23ffb6c1"/><text x="24" y="36" font-size="32" text-anchor="middle" fill="%23ff69b4" font-family="Arial">&#10084;</text></svg>')`, // heart
+        retro: `url('data:image/svg+xml;utf8,<svg width="48" height="48" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" fill="%23ffdc00"/><text x="24" y="36" font-size="32" text-anchor="middle" fill="%23ff6b35" font-family="Arial">&#9733;</text></svg>')`, // star
+        space: `url('data:image/svg+xml;utf8,<svg width="48" height="48" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" fill="%230f3460"/><circle cx="24" cy="24" r="10" fill="%23533483"/><text x="24" y="36" font-size="24" text-anchor="middle" fill="%23e94560" font-family="Arial">&#10026;</text></svg>')` // sparkle/star
+    };
+
+    // Corny CSS for each mode with tiled backgrounds (force background-size, background-repeat, and !important)
+    const cornyCSS = {
+        metal: `
+            body.metal-mode.corny-theme {
+                background-color: #1a1a1a !important;
+                background-image: ${cornyTiles.metal} !important;
+                background-size: 48px 48px !important;
+                background-repeat: repeat !important;
+                background-attachment: scroll !important;
+                cursor: url('https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f525.png'), crosshair !important;
+                animation: metal-bg-flash 2s infinite alternate;
+            }
+            @keyframes metal-bg-flash {
+                0% { filter: brightness(1) contrast(1); }
+                100% { filter: brightness(1.2) contrast(1.3) drop-shadow(0 0 30px #ff0000); }
+            }
+            .mode-indicator {
+                background: repeating-linear-gradient(45deg, #ff0000, #ff0000 10px, #333 10px, #333 20px);
+                color: #fff;
+                font-family: 'Metal Mania', cursive, sans-serif;
+                font-size: 2.2rem;
+                letter-spacing: 2px;
+                border: 4px solid #fff;
+                border-radius: 12px;
+                box-shadow: 0 0 30px #ff0000, 0 0 10px #fff inset;
+                padding: 12px 32px;
+                margin: 24px auto 12px auto;
+                text-shadow: 0 0 8px #ff0000, 0 0 2px #fff;
+                animation: corny-bounce 1.2s infinite alternate;
+            }
+        `,
+        girly: `
+            body.girly-mode.corny-theme {
+                background-color: #ffb6c1 !important;
+                background-image: ${cornyTiles.girly} !important;
+                background-size: 48px 48px !important;
+                background-repeat: repeat !important;
+                background-attachment: scroll !important;
+                cursor: url('https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f497.png'), pointer !important;
+                animation: girly-bg-sparkle 3s linear infinite;
+            }
+            @keyframes girly-bg-sparkle {
+                0% { background-position: 0 0; }
+                100% { background-position: 100px 100px; }
+            }
+            .mode-indicator {
+                background: repeating-linear-gradient(135deg, #ffb6c1, #ff69b4 20px, #fff 40px);
+                color: #8b008b;
+                font-family: 'Dancing Script', cursive, sans-serif;
+                font-size: 2.2rem;
+                border: 4px dashed #ff69b4;
+                border-radius: 24px;
+                box-shadow: 0 0 30px #ffb6c1, 0 0 10px #fff inset;
+                padding: 12px 32px;
+                margin: 24px auto 12px auto;
+                text-shadow: 0 0 8px #ff69b4, 0 0 2px #fff;
+                animation: corny-heartbeat 1.1s infinite;
+            }
+            @keyframes corny-heartbeat {
+                0%, 100% { transform: scale(1); }
+                20% { transform: scale(1.1); }
+                40% { transform: scale(0.95); }
+                60% { transform: scale(1.05); }
+                80% { transform: scale(0.98); }
+            }
+        `,
+        retro: `
+            body.retro-mode.corny-theme {
+                background-color: #ffdc00 !important;
+                background-image: ${cornyTiles.retro} !important;
+                background-size: 48px 48px !important;
+                background-repeat: repeat !important;
+                background-attachment: scroll !important;
+                cursor: url('https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4a8.png'), pointer !important;
+                animation: retro-bg-move 4s linear infinite;
+            }
+            @keyframes retro-bg-move {
+                0% { background-position: 0 0; }
+                100% { background-position: 120px 0; }
+            }
+            .mode-indicator {
+                background: repeating-linear-gradient(45deg, #ffdc00, #f7931e 10px, #ff6b35 20px);
+                color: #2c1810;
+                font-family: 'Righteous', cursive, sans-serif;
+                font-size: 2.2rem;
+                border: 4px double #ffdc00;
+                border-radius: 16px;
+                box-shadow: 0 0 30px #ffdc00, 0 0 10px #fff inset;
+                padding: 12px 32px;
+                margin: 24px auto 12px auto;
+                text-shadow: 0 0 8px #ffdc00, 0 0 2px #fff;
+                animation: corny-bounce 1.3s infinite alternate;
+            }
+        `,
+        space: `
+            body.space-mode.corny-theme {
+                background-color: #0f3460 !important;
+                background-image: ${cornyTiles.space} !important;
+                background-size: 48px 48px !important;
+                background-repeat: repeat !important;
+                background-attachment: scroll !important;
+                cursor: url('https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f52e.png'), pointer !important;
+                animation: space-bg-stars 8s linear infinite;
+            }
+            @keyframes space-bg-stars {
+                0% { background-position: 0 0; }
+                100% { background-position: 0 200px; }
+            }
+            .mode-indicator {
+                background: linear-gradient(90deg, #0f3460 0%, #533483 100%);
+                color: #e94560;
+                font-family: 'Orbitron', monospace, sans-serif;
+                font-size: 2.2rem;
+                border: 4px solid #e94560;
+                border-radius: 50px;
+                box-shadow: 0 0 30px #533483, 0 0 10px #fff inset;
+                padding: 12px 32px;
+                margin: 24px auto 12px auto;
+                text-shadow: 0 0 8px #e94560, 0 0 2px #fff;
+                animation: corny-glow 2s infinite alternate;
+            }
+            @keyframes corny-glow {
+                0% { filter: drop-shadow(0 0 10px #e94560); }
+                100% { filter: drop-shadow(0 0 30px #fff); }
+            }
+        `
+    };
+
+    // General corny theme CSS
+    const generalCorny = `
+        .corny-theme main {
+            border: 8px ridge gold;
+            border-radius: 32px;
+            box-shadow: 0 0 40px 10px #fff8, 0 0 0 8px #ff0a, 0 0 0 16px #f0f8ff44;
+            margin: 32px auto;
+            padding: 32px 16px 16px 16px;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(2px);
+            animation: corny-main-pop 1.2s cubic-bezier(.68,-0.55,.27,1.55);
+        }
+        @keyframes corny-main-pop {
+            0% { transform: scale(0.7) rotate(-8deg); opacity: 0; }
+            80% { transform: scale(1.05) rotate(2deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0); }
+        }
+        .corny-theme .poem-section {
+            border: 4px dashed #fff;
+            border-radius: 18px;
+            margin: 32px 0;
+            box-shadow: 0 0 24px 4px #fffa, 0 0 0 4px #ff0a;
+            background: rgba(255,255,255,0.18);
+            transition: box-shadow 0.3s, transform 0.3s;
+            animation: corny-bounce 1.2s infinite alternate;
+        }
+        @keyframes corny-bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-10px) scale(1.03); }
+        }
+        .corny-theme .poem-section:hover {
+            box-shadow: 0 0 40px 10px #ff0a, 0 0 0 8px #fff8;
+            transform: scale(1.04) rotate(-2deg);
+        }
+        .corny-theme .poem-image {
+            border: 4px solid #fff;
+            border-radius: 16px;
+            box-shadow: 0 0 20px 4px #fff8, 0 0 0 4px #ff0a;
+            margin-bottom: 12px;
+            animation: corny-img-pop 0.8s cubic-bezier(.68,-0.55,.27,1.55);
+        }
+        @keyframes corny-img-pop {
+            0% { transform: scale(0.7) rotate(-8deg); opacity: 0; }
+            80% { transform: scale(1.05) rotate(2deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0); }
+        }
+        .corny-theme .act-label {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #fff;
+            background: #000a;
+            border-radius: 8px;
+            padding: 4px 16px;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+            box-shadow: 0 0 8px #fff8;
+            animation: corny-bounce 1.2s infinite alternate;
+        }
+        .corny-theme .stanza-notes {
+            font-size: 1rem;
+            color: #fff;
+            background: #ff0a;
+            border-radius: 8px;
+            padding: 6px 12px;
+            margin-top: 8px;
+            box-shadow: 0 0 8px #ff0a;
+            animation: corny-bounce 1.2s infinite alternate;
+        }
+        .corny-theme #regenerate-btn {
+            border: 4px solid #fff;
+            border-radius: 32px;
+            background: linear-gradient(90deg, #ff0, #f0f, #0ff, #ff0);
+            background-size: 400% 400%;
+            color: #000;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 0 24px 8px #fff8, 0 0 0 8px #ff0a;
+            animation: corny-btn-glow 2s linear infinite, corny-btn-bgmove 6s linear infinite;
+        }
+        @keyframes corny-btn-glow {
+            0% { box-shadow: 0 0 24px 8px #fff8, 0 0 0 8px #ff0a; }
+            50% { box-shadow: 0 0 40px 16px #ff0a, 0 0 0 16px #fff8; }
+            100% { box-shadow: 0 0 24px 8px #fff8, 0 0 0 8px #ff0a; }
+        }
+        @keyframes corny-btn-bgmove {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+    `;
+
+    // Compose style
+    const style = document.createElement('style');
+    style.id = 'corny-theme-style';
+    style.textContent = (cornyCSS[mode] || '') + generalCorny;
+    document.head.appendChild(style);
+
+    // Remove existing mode indicator
     const existing = document.querySelector('.mode-indicator');
     if (existing) existing.remove();
-    
+
+    // Add animated mode indicator
     const indicator = document.createElement('div');
     indicator.className = 'mode-indicator';
-    indicator.textContent = modes[mode].name;
+    indicator.textContent = modes[mode].name + '!!!';
     document.body.appendChild(indicator);
 }
 
