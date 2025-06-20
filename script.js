@@ -403,21 +403,20 @@ function applyModeStyles(mode) {
         corpo: `url('data:image/svg+xml;utf8,<svg width="48" height="48" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" fill="%23f5f7fa"/><text x="24" y="36" font-size="18" text-anchor="middle" fill="%230070f3" font-family="Arial">%24</text><text x="24" y="20" font-size="18" text-anchor="middle" fill="%23333" font-family="Arial">%E2%9C%94</text></svg>')` // dollar sign and checkmark
     };
 
-    // Corny CSS for each mode with animated backgrounds
+    // Corny CSS for each mode with bulletproof animated tile backgrounds
     const cornyCSS = {
         metal: `
             body.metal-mode.corny-theme {
-                background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%) !important;
-                background-image: ${cornyTiles.metal} !important;
+                background-image: ${cornyTiles.metal}, linear-gradient(135deg, #1a1a1a 0%, #000000 100%) !important;
                 background-size: 48px 48px, 200% 200% !important;
                 background-repeat: repeat, no-repeat !important;
-                background-blend-mode: overlay !important;
+                background-blend-mode: normal, overlay !important;
+                background-position: 0 0, center center !important;
                 animation: metal-bg-anim 2.5s linear infinite alternate !important;
             }
             @keyframes metal-bg-anim {
-                0% { background-position: 0% 50%, 0 0; filter: brightness(1) contrast(1); }
-                50% { background-position: 100% 50%, 24px 24px; filter: brightness(1.2) contrast(1.2); }
-                100% { background-position: 0% 50%, 0 0; filter: brightness(1) contrast(1); }
+                0% { background-position: 0 0, center center; }
+                100% { background-position: 48px 48px, center center; }
             }
             .mode-indicator {
                 background: repeating-linear-gradient(45deg, #ff0000, #ff0000 10px, #333 10px, #333 20px);
@@ -436,17 +435,16 @@ function applyModeStyles(mode) {
         `,
         girly: `
             body.girly-mode.corny-theme {
-                background: linear-gradient(45deg, #ffb6c1 0%, #ff69b4 100%) !important;
-                background-image: ${cornyTiles.girly} !important;
+                background-image: ${cornyTiles.girly}, linear-gradient(45deg, #ffb6c1 0%, #ff69b4 100%) !important;
                 background-size: 48px 48px, 300% 300% !important;
                 background-repeat: repeat, no-repeat !important;
-                background-blend-mode: lighten !important;
+                background-blend-mode: normal, lighten !important;
+                background-position: 0 0, center center !important;
                 animation: girly-bg-anim 3s linear infinite !important;
             }
             @keyframes girly-bg-anim {
-                0% { background-position: 0% 0%, 0 0; filter: hue-rotate(0deg); }
-                50% { background-position: 100% 100%, 24px 24px; filter: hue-rotate(20deg); }
-                100% { background-position: 0% 0%, 0 0; filter: hue-rotate(0deg); }
+                0% { background-position: 0 0, center center; }
+                100% { background-position: 48px 48px, center center; }
             }
             .mode-indicator {
                 background: repeating-linear-gradient(135deg, #ffb6c1, #ff69b4 20px, #fff 40px);
@@ -471,17 +469,16 @@ function applyModeStyles(mode) {
         `,
         retro: `
             body.retro-mode.corny-theme {
-                background: linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #ffdc00 100%) !important;
-                background-image: ${cornyTiles.retro} !important;
+                background-image: ${cornyTiles.retro}, linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #ffdc00 100%) !important;
                 background-size: 48px 48px, 400% 400% !important;
                 background-repeat: repeat, no-repeat !important;
-                background-blend-mode: screen !important;
+                background-blend-mode: normal, screen !important;
+                background-position: 0 0, center center !important;
                 animation: retro-bg-anim 4s linear infinite !important;
             }
             @keyframes retro-bg-anim {
-                0% { background-position: 0% 50%, 0 0; filter: hue-rotate(0deg); }
-                50% { background-position: 100% 50%, 24px 24px; filter: hue-rotate(30deg); }
-                100% { background-position: 0% 50%, 0 0; filter: hue-rotate(0deg); }
+                0% { background-position: 0 0, center center; }
+                100% { background-position: 48px 0, center center; }
             }
             .mode-indicator {
                 background: repeating-linear-gradient(45deg, #ffdc00, #f7931e 10px, #ff6b35 20px);
@@ -499,17 +496,16 @@ function applyModeStyles(mode) {
         `,
         space: `
             body.space-mode.corny-theme {
-                background: radial-gradient(ellipse at center, #0f3460 0%, #16537e 50%, #533483 100%) !important;
-                background-image: ${cornyTiles.space} !important;
+                background-image: ${cornyTiles.space}, radial-gradient(ellipse at center, #0f3460 0%, #16537e 50%, #533483 100%) !important;
                 background-size: 48px 48px, 150% 150% !important;
                 background-repeat: repeat, no-repeat !important;
-                background-blend-mode: lighten !important;
+                background-blend-mode: normal, lighten !important;
+                background-position: 0 0, center center !important;
                 animation: space-bg-anim 8s linear infinite !important;
             }
             @keyframes space-bg-anim {
-                0% { background-position: 50% 0%, 0 0; filter: brightness(1); }
-                50% { background-position: 50% 100%, 24px 24px; filter: brightness(1.2); }
-                100% { background-position: 50% 0%, 0 0; filter: brightness(1); }
+                0% { background-position: 0 0, center center; }
+                100% { background-position: 24px 48px, center center; }
             }
             .mode-indicator {
                 background: linear-gradient(90deg, #0f3460 0%, #533483 100%);
@@ -531,17 +527,16 @@ function applyModeStyles(mode) {
         `,
         corpo: `
             body.corpo-mode.corny-theme {
-                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
-                background-image: ${cornyTiles.corpo} !important;
+                background-image: ${cornyTiles.corpo}, linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
                 background-size: 48px 48px, 200% 200% !important;
                 background-repeat: repeat, no-repeat !important;
-                background-blend-mode: lighten !important;
+                background-blend-mode: normal, lighten !important;
+                background-position: 0 0, center center !important;
                 animation: corpo-bg-anim 6s linear infinite !important;
             }
             @keyframes corpo-bg-anim {
-                0% { background-position: 0% 0%, 0 0; filter: brightness(1); }
-                50% { background-position: 100% 100%, 24px 24px; filter: brightness(1.1); }
-                100% { background-position: 0% 0%, 0 0; filter: brightness(1); }
+                0% { background-position: 0 0, center center; }
+                100% { background-position: 48px 24px, center center; }
             }
             .mode-indicator {
                 background: repeating-linear-gradient(135deg, #c3cfe2, #0070f3 20px, #fff 40px);
@@ -840,39 +835,24 @@ function animateElementIn(element, delay = 0) {
 async function generatePoem() {
     const container = document.getElementById('poem-container');
     if (!container) return;
-    
     try {
         // Get current poem data based on mode and JSON sampling
         const poemData = await getPoemData();
-        
         // Clear existing content efficiently
         container.innerHTML = '';
-        
-        // Create main element with document fragment for better performance
-        const fragment = document.createDocumentFragment();
-        const main = document.createElement('main');
-        
-        const usedImages = [];
-        
         // Create stanzas with optimized image selection
+        const usedImages = [];
         poemData.stanzas.forEach((stanza, index) => {
             const imageData = getRandomImageForStanza(stanza, usedImages);
             usedImages.push(imageData.src);
-            
             const stanzaElement = createStanzaElement(stanza, imageData, index);
-            main.appendChild(stanzaElement);
+            container.appendChild(stanzaElement);
         });
-        
-        fragment.appendChild(main);
-        container.appendChild(fragment);
-        
         // Animate stanzas efficiently
-        const stanzas = main.querySelectorAll('.poem-section');
+        const stanzas = container.querySelectorAll('.poem-section');
         stanzas.forEach((stanza, index) => {
-            // Stagger animation with requestAnimationFrame
             setTimeout(() => animateElementIn(stanza), index * 100);
         });
-        
     } catch (error) {
         console.error('Error generating poem:', error);
         container.innerHTML = '<div class="error">Failed to load poem. Please refresh.</div>';
