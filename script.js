@@ -671,11 +671,11 @@ function applyModeStyles(mode) {
     const existing = document.querySelector('.mode-indicator');
     if (existing) existing.remove();
 
-    // Add animated mode indicator
-    const indicator = document.createElement('div');
-    indicator.className = 'mode-indicator';
-    indicator.textContent = modes[mode].name + '!!!';
-    document.body.appendChild(indicator);
+    // // Add animated mode indicator
+    // const indicator = document.createElement('div');
+    // indicator.className = 'mode-indicator';
+    // indicator.textContent = modes[mode].name + '!!!';
+    // document.body.appendChild(indicator);
 }
 
 // Function to create and play audio - SIMPLIFIED

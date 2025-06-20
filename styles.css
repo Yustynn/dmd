@@ -89,6 +89,14 @@ body {
 /* Metal Mode - Simplified */
 body.metal-mode {
     background: linear-gradient(135deg, #1a0000 0%, #000000 100%);
+    animation: metal-bg-anim 2.5s linear infinite alternate;
+    background-size: 200% 200%;
+}
+
+@keyframes metal-bg-anim {
+    0% { background-position: 0% 50%; filter: brightness(1) contrast(1); }
+    50% { background-position: 100% 50%; filter: brightness(1.2) contrast(1.2); }
+    100% { background-position: 0% 50%; filter: brightness(1) contrast(1); }
 }
 
 body.metal-mode::before {
@@ -111,6 +119,14 @@ body.metal-mode::after {
 /* Girly Mode - Simplified */
 body.girly-mode {
     background: linear-gradient(45deg, #ffb6c1 0%, #ff69b4 100%);
+    animation: girly-bg-anim 3s linear infinite;
+    background-size: 300% 300%;
+}
+
+@keyframes girly-bg-anim {
+    0% { background-position: 0% 0%; filter: hue-rotate(0deg); }
+    50% { background-position: 100% 100%; filter: hue-rotate(20deg); }
+    100% { background-position: 0% 0%; filter: hue-rotate(0deg); }
 }
 
 body.girly-mode::before {
@@ -133,6 +149,14 @@ body.girly-mode::after {
 /* Space Mode - Simplified */
 body.space-mode {
     background: radial-gradient(ellipse at center, #0f3460 0%, #16537e 50%, #533483 100%);
+    animation: space-bg-anim 8s linear infinite;
+    background-size: 150% 150%;
+}
+
+@keyframes space-bg-anim {
+    0% { background-position: 50% 0%; filter: brightness(1); }
+    50% { background-position: 50% 100%; filter: brightness(1.2); }
+    100% { background-position: 50% 0%; filter: brightness(1); }
 }
 
 body.space-mode::before {
@@ -155,6 +179,14 @@ body.space-mode::after {
 /* Retro Mode - Simplified */
 body.retro-mode {
     background: linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #ffdc00 100%);
+    animation: retro-bg-anim 4s linear infinite;
+    background-size: 400% 400%;
+}
+
+@keyframes retro-bg-anim {
+    0% { background-position: 0% 50%; filter: hue-rotate(0deg); }
+    50% { background-position: 100% 50%; filter: hue-rotate(30deg); }
+    100% { background-position: 0% 50%; filter: hue-rotate(0deg); }
 }
 
 body.retro-mode::before {
@@ -513,7 +545,7 @@ footer {
 /* Space Mode Header Effects */
 .space-mode header h1 {
     color: #00ffff;
-    text-shadow: 0 0 5px #00ffff;
+    /* Removed text-shadow for no glow */
     font-family: 'Orbitron', monospace;
     font-weight: 900;
     letter-spacing: 3px;
@@ -521,7 +553,7 @@ footer {
 
 .space-mode .subtitle {
     color: #80ff80;
-    text-shadow: 0 0 5px #80ff80;
+    /* Removed text-shadow for no glow */
     font-family: 'Exo 2', sans-serif;
     text-transform: uppercase;
 }
@@ -537,7 +569,10 @@ footer {
     border: 2px solid #00ffff;
     border-left: 4px solid #0080ff;
     color: #ffffff;
-    text-shadow: 0 0 3px #00ffff;
+    /* text-shadow: 0 0 3px #00ffff; */
+}
+.space-mode .stanza p {
+    color: #b7cfe7;
 }
 
 /* Retro Mode Header Effects */
