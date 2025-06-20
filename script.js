@@ -118,24 +118,84 @@ const basePoemData = {
 // Mode-specific poem variations (will be replaced by JSON sampling)
 const modePoems = {
     metal: {
-        title: "Hellhound Rising",
-        subtitle: "Daddy taught me how to train the metal dog"
+        titles: [
+            "Hellhound Rising",
+            "Blood Moon Howl",
+            "Iron Teeth, Steel Hearts",
+            "Darkness Unleashed",
+            "The Beast Within"
+        ],
+        subtitles: [
+            "Daddy taught me how to train the metal dog",
+            "When Daddy and me forged the demon dog",
+            "The day Daddy showed me the hellhound's true power",
+            "How Daddy and me awakened the iron dog",
+            "Daddy's lesson: me, him, and the beast dog"
+        ]
     },
     girly: {
-        title: "Sparkles & Bows",
-        subtitle: "Daddy gave me the cutest dog ever"
+        titles: [
+            "Sparkles & Bows",
+            "Princess Paws",
+            "Cotton Candy Dreams",
+            "Rainbow Puppy Love",
+            "Glitter & Giggles"
+        ],
+        subtitles: [
+            "Daddy gave me the cutest dog ever",
+            "How Daddy and me found our perfect fluffy dog",
+            "When Daddy surprised me with the sweetest dog",
+            "Daddy's gift: a precious dog just for me",
+            "The magical story of Daddy, me, and our angel dog"
+        ]
     },
     retro: {
-        title: "8-Bit Companions",
-        subtitle: "Daddy, me, and our pixelated dog adventures"
+        titles: [
+            "8-Bit Companions",
+            "Pixel Perfect Pals",
+            "Neon Nights & Digital Dogs",
+            "Arcade Adventures",
+            "Synth Wave Puppies"
+        ],
+        subtitles: [
+            "Daddy, me, and our pixelated dog adventures",
+            "When Daddy taught me to program our virtual dog",
+            "How Daddy and me glitched into the digital dog dimension",
+            "Daddy's retro quest: finding me the perfect cyber dog",
+            "The day Daddy, me, and our robot dog saved the arcade"
+        ]
     },
     space: {
-        title: "Dog+Me+Daddy",
-        subtitle: "A marketing adventure against blurbo"
+        titles: [
+            "Dog+Me+Daddy",
+            "Cosmic Canine Protocol",
+            "Stellar Pup Mission",
+            "Galaxy Guard Dogs",
+            "Nebula Hound Chronicles"
+        ],
+        subtitles: [
+            "A marketing adventure against blurbo",
+            "How Daddy and me launched our space dog into orbit",
+            "When Daddy taught me to pilot the quantum dog ship",
+            "Daddy's mission: protecting me and our alien dog",
+            "The cosmic journey of Daddy, me, and our star dog"
+        ]
     },
     corpo: {
-        title: "Optimal Pet Solutions",
-        subtitle: "How daddy and me leveraged synergy with the dog"
+        titles: [
+            "Optimal Pet Solutions",
+            "Strategic Canine Partnership",
+            "Synergistic Animal Assets",
+            "Corporate Companion Metrics",
+            "Executive Pet Management"
+        ],
+        subtitles: [
+            "How daddy and me leveraged synergy with the dog",
+            "When Daddy optimized me and our productivity dog",
+            "Daddy's ROI strategy: me, him, and the performance dog",
+            "How Daddy and me disrupted the market with our innovation dog",
+            "The quarterly review: Daddy, me, and our KPI dog"
+        ]
     }
 };
 
@@ -221,18 +281,29 @@ function getImagesForAct(act) {
 async function getPoemData() {
     const poemDatabase = await loadPoemData();
     const sampledVerses = sampleVersesFromActs(poemDatabase);
-    
     if (!sampledVerses || sampledVerses.length === 0) {
         // Fallback to original poem if JSON fails
         return basePoemData;
     }
-    
-    // Get mode-specific title and subtitle
-    const modeConfig = currentMode && modePoems[currentMode] ? modePoems[currentMode] : basePoemData;
-    
+    // Get mode-specific title and subtitle (randomly select from arrays if available)
+    let title = basePoemData.title;
+    let subtitle = basePoemData.subtitle;
+    if (currentMode && modePoems[currentMode]) {
+        const modeConfig = modePoems[currentMode];
+        if (Array.isArray(modeConfig.titles) && modeConfig.titles.length > 0) {
+            title = modeConfig.titles[Math.floor(Math.random() * modeConfig.titles.length)];
+        } else if (modeConfig.title) {
+            title = modeConfig.title;
+        }
+        if (Array.isArray(modeConfig.subtitles) && modeConfig.subtitles.length > 0) {
+            subtitle = modeConfig.subtitles[Math.floor(Math.random() * modeConfig.subtitles.length)];
+        } else if (modeConfig.subtitle) {
+            subtitle = modeConfig.subtitle;
+        }
+    }
     return {
-        title: modeConfig.title || "Rachael's Story",
-        subtitle: modeConfig.subtitle || "A digital nightmare in three acts",
+        title,
+        subtitle,
         stanzas: sampledVerses
     };
 }
