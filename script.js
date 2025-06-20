@@ -59,6 +59,21 @@ const modes = {
         },
         song: "https://www.soundjay.com/misc/sounds/ambient-loop.mp3", // Placeholder - replace with actual ambient space song
         background: "radial-gradient(ellipse at center, #0f3460 0%, #16537e 50%, #533483 100%)"
+    },
+    corpo: {
+        name: "Corpo Mode",
+        colors: {
+            primary: "#f5f7fa",
+            secondary: "#c3cfe2",
+            accent: "#0070f3",
+            text: "#333333"
+        },
+        fonts: {
+            heading: "'Segoe UI', 'Arial', sans-serif",
+            body: "'Roboto', 'Arial', sans-serif"
+        },
+        song: "https://www.soundjay.com/misc/sounds/corporate-music.mp3", // Placeholder - replace with actual corpo jingle
+        background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)"
     }
 };
 
@@ -103,20 +118,24 @@ const basePoemData = {
 // Mode-specific poem variations (will be replaced by JSON sampling)
 const modePoems = {
     metal: {
-        title: "Dog+Me+Daddy",
-        subtitle: "A marketing adventure against blurbo"
+        title: "Hellhound Rising",
+        subtitle: "Daddy taught me how to train the metal dog"
     },
     girly: {
-        title: "Dog+Me+Daddy",
-        subtitle: "A marketing adventure against blurbo"
+        title: "Sparkles & Bows",
+        subtitle: "Daddy gave me the cutest dog ever"
     },
     retro: {
-        title: "Dog+Me+Daddy",
-        subtitle: "A marketing adventure against blurbo"
+        title: "8-Bit Companions",
+        subtitle: "Daddy, me, and our pixelated dog adventures"
     },
     space: {
         title: "Dog+Me+Daddy",
         subtitle: "A marketing adventure against blurbo"
+    },
+    corpo: {
+        title: "Optimal Pet Solutions",
+        subtitle: "How daddy and me leveraged synergy with the dog"
     }
 };
 
@@ -380,7 +399,8 @@ function applyModeStyles(mode) {
         metal: `url('data:image/svg+xml;utf8,<svg width="48" height="48" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" fill="%231a1a1a"/><text x="24" y="36" font-size="32" text-anchor="middle" fill="%23ff0000" font-family="Arial">%E2%9A%A1</text></svg>')`, // lightning bolt
         girly: `url('data:image/svg+xml;utf8,<svg width="48" height="48" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" fill="%23ffb6c1"/><text x="24" y="36" font-size="32" text-anchor="middle" fill="%23ff69b4" font-family="Arial">%E2%9D%A4</text></svg>')`, // heart
         retro: `url('data:image/svg+xml;utf8,<svg width="48" height="48" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" fill="%23ffdc00"/><text x="24" y="36" font-size="32" text-anchor="middle" fill="%23ff6b35" font-family="Arial">%E2%98%85</text></svg>')`, // star
-        space: `url('data:image/svg+xml;utf8,<svg width="48" height="48" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" fill="%230f3460"/><circle cx="24" cy="24" r="10" fill="%23533483"/><text x="24" y="36" font-size="24" text-anchor="middle" fill="%23e94560" font-family="Arial">%E2%9C%AA</text></svg>')` // sparkle/star
+        space: `url('data:image/svg+xml;utf8,<svg width="48" height="48" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" fill="%230f3460"/><circle cx="24" cy="24" r="10" fill="%23533483"/><text x="24" y="36" font-size="24" text-anchor="middle" fill="%23e94560" font-family="Arial">%E2%9C%AA</text></svg>')`, // sparkle/star
+        corpo: `url('data:image/svg+xml;utf8,<svg width="48" height="48" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" fill="%23f5f7fa"/><text x="24" y="36" font-size="18" text-anchor="middle" fill="%230070f3" font-family="Arial">%24</text><text x="24" y="20" font-size="18" text-anchor="middle" fill="%23333" font-family="Arial">%E2%9C%94</text></svg>')` // dollar sign and checkmark
     };
 
     // Corny CSS for each mode with tiled backgrounds (force background-size, background-repeat, and !important)
@@ -508,6 +528,34 @@ function applyModeStyles(mode) {
                 0% { filter: drop-shadow(0 0 10px #e94560); }
                 100% { filter: drop-shadow(0 0 30px #fff); }
             }
+        `,
+        corpo: `
+            body.corpo-mode.corny-theme {
+                background-color: #f5f7fa !important;
+                background-image: ${cornyTiles.corpo} !important;
+                background-size: 48px 48px !important;
+                background-repeat: repeat !important;
+                background-attachment: scroll !important;
+                cursor: url('https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4b0.png'), pointer !important;
+                animation: corpo-bg-slide 6s linear infinite;
+            }
+            @keyframes corpo-bg-slide {
+                0% { background-position: 0 0; }
+                100% { background-position: 200px 200px; }
+            }
+            .mode-indicator {
+                background: repeating-linear-gradient(135deg, #c3cfe2, #0070f3 20px, #fff 40px);
+                color: #0070f3;
+                font-family: 'Segoe UI', Arial, sans-serif;
+                font-size: 2.2rem;
+                border: 4px solid #0070f3;
+                border-radius: 16px;
+                box-shadow: 0 0 30px #c3cfe2, 0 0 10px #fff inset;
+                padding: 12px 32px;
+                margin: 24px auto 12px auto;
+                text-shadow: 0 0 8px #0070f3, 0 0 2px #fff;
+                animation: corny-bounce 1.2s infinite alternate;
+            }
         `
     };
 
@@ -522,6 +570,18 @@ function applyModeStyles(mode) {
             background: rgba(255,255,255,0.15);
             backdrop-filter: blur(2px);
             animation: corny-main-pop 1.2s cubic-bezier(.68,-0.55,.27,1.55);
+        }
+        .header-glass {
+            background: rgba(255,255,255,0.35);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px 0 rgba(31,38,135,0.18);
+            backdrop-filter: blur(8px) saturate(1.5);
+            -webkit-backdrop-filter: blur(8px) saturate(1.5);
+            border: 1.5px solid rgba(255,255,255,0.25);
+            padding: 24px 32px 18px 32px;
+            margin: 32px auto 24px auto;
+            display: inline-block;
+            max-width: 90vw;
         }
         @keyframes corny-main-pop {
             0% { transform: scale(0.7) rotate(-8deg); opacity: 0; }
@@ -898,6 +958,25 @@ function addRegenerateButton() {
 // OPTIMIZED Initialize the poem when the page loads
 document.addEventListener('DOMContentLoaded', async () => {
     try {
+        // Add frosted glass effect to header title, subtitle, and slogan
+        let headerEl = document.querySelector('header');
+        if (headerEl) {
+            const h1 = headerEl.querySelector('h1');
+            const subtitle = headerEl.querySelector('.subtitle');
+            const slogan = document.getElementById('aussie-slogan');
+            if (h1 && subtitle && slogan) {
+                // Create wrapper
+                const glassDiv = document.createElement('div');
+                glassDiv.className = 'header-glass';
+                // Move elements into wrapper
+                glassDiv.appendChild(h1);
+                glassDiv.appendChild(subtitle);
+                glassDiv.appendChild(slogan);
+                // Insert wrapper at top of header
+                headerEl.insertBefore(glassDiv, headerEl.firstChild);
+            }
+        }
+        
         // Load Australian slogan first
         await loadAussieSlogan();
         
@@ -909,6 +988,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         // Apply mode styles (simplified)
         applyModeStyles(currentMode);
+        
+        // Wrap header content in a translucent glass div
+        const header = document.querySelector('header');
+        if (header && !header.querySelector('.header-glass')) {
+            const h1 = header.querySelector('h1');
+            const subtitle = header.querySelector('.subtitle');
+            const slogan = document.getElementById('aussie-slogan');
+            if (h1 && subtitle && slogan) {
+                const glass = document.createElement('div');
+                glass.className = 'header-glass';
+                glass.appendChild(h1);
+                glass.appendChild(subtitle);
+                glass.appendChild(slogan);
+                header.appendChild(glass);
+            }
+        }
         
         // Generate poem and get data
         await generatePoem();
@@ -1005,26 +1100,23 @@ async function loadAussieSlogan() {
     try {
         const response = await fetch('aussie-slogans.json');
         const slogans = await response.json();
-        
         // Get all items and their slogans
         const items = Object.keys(slogans);
         const randomItem = items[Math.floor(Math.random() * items.length)];
         const itemSlogans = slogans[randomItem];
         const randomSlogan = itemSlogans[Math.floor(Math.random() * itemSlogans.length)];
-        
         // Update the slogan display
         const sloganElement = document.querySelector('.slogan-text');
         if (sloganElement) {
-            sloganElement.textContent = randomSlogan;
+            sloganElement.innerHTML = '<b>REDEFY REBRAND:</b> ' + randomSlogan;
         }
-        
         return { item: randomItem, slogan: randomSlogan };
     } catch (error) {
         console.error('Failed to load Australian slogan:', error);
         // Fallback slogan
         const sloganElement = document.querySelector('.slogan-text');
         if (sloganElement) {
-            sloganElement.textContent = "It's not a website, it's digital poetry with extreme Australian energy.";
+            sloganElement.innerHTML = '<b>REDEFY REBRAND:</b> It\'s not a website, it\'s digital poetry with extreme Australian energy.';
         }
         return null;
     }
@@ -1044,15 +1136,13 @@ function setupSloganClickHandler() {
     if (sloganElement) {
         sloganElement.style.cursor = 'pointer';
         sloganElement.title = 'Click for a new Aussie slogan!';
-        
         const clickHandler = async () => {
             const sloganText = sloganElement.querySelector('.slogan-text');
             if (sloganText) {
-                sloganText.textContent = 'Getting new wisdom...';
+                sloganText.innerHTML = '<b>REDEFY REBRAND:</b> Getting new wisdom...';
                 await updateAussieSlogan();
             }
         };
-        
         sloganElement.addEventListener('click', clickHandler);
     }
 }
