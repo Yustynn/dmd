@@ -375,12 +375,12 @@ function applyModeStyles(mode) {
     const oldCorny = document.getElementById('corny-theme-style');
     if (oldCorny) oldCorny.remove();
 
-    // Corny tiled SVG backgrounds for each mode (HTML entities, y=36 for vertical centering)
+    // Corny tiled SVG backgrounds for each mode (HTML entities, y=36 for vertical centering, and proper escaping)
     const cornyTiles = {
-        metal: `url('data:image/svg+xml;utf8,<svg width="48" height="48" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" fill="%231a1a1a"/><text x="24" y="36" font-size="32" text-anchor="middle" fill="%23ff0000" font-family="Arial">&#9889;</text></svg>')`, // lightning bolt
-        girly: `url('data:image/svg+xml;utf8,<svg width="48" height="48" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" fill="%23ffb6c1"/><text x="24" y="36" font-size="32" text-anchor="middle" fill="%23ff69b4" font-family="Arial">&#10084;</text></svg>')`, // heart
-        retro: `url('data:image/svg+xml;utf8,<svg width="48" height="48" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" fill="%23ffdc00"/><text x="24" y="36" font-size="32" text-anchor="middle" fill="%23ff6b35" font-family="Arial">&#9733;</text></svg>')`, // star
-        space: `url('data:image/svg+xml;utf8,<svg width="48" height="48" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" fill="%230f3460"/><circle cx="24" cy="24" r="10" fill="%23533483"/><text x="24" y="36" font-size="24" text-anchor="middle" fill="%23e94560" font-family="Arial">&#10026;</text></svg>')` // sparkle/star
+        metal: `url('data:image/svg+xml;utf8,<svg width="48" height="48" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" fill="%231a1a1a"/><text x="24" y="36" font-size="32" text-anchor="middle" fill="%23ff0000" font-family="Arial">%E2%9A%A1</text></svg>')`, // lightning bolt
+        girly: `url('data:image/svg+xml;utf8,<svg width="48" height="48" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" fill="%23ffb6c1"/><text x="24" y="36" font-size="32" text-anchor="middle" fill="%23ff69b4" font-family="Arial">%E2%9D%A4</text></svg>')`, // heart
+        retro: `url('data:image/svg+xml;utf8,<svg width="48" height="48" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" fill="%23ffdc00"/><text x="24" y="36" font-size="32" text-anchor="middle" fill="%23ff6b35" font-family="Arial">%E2%98%85</text></svg>')`, // star
+        space: `url('data:image/svg+xml;utf8,<svg width="48" height="48" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" fill="%230f3460"/><circle cx="24" cy="24" r="10" fill="%23533483"/><text x="24" y="36" font-size="24" text-anchor="middle" fill="%23e94560" font-family="Arial">%E2%9C%AA</text></svg>')` // sparkle/star
     };
 
     // Corny CSS for each mode with tiled backgrounds (force background-size, background-repeat, and !important)
